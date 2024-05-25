@@ -9,9 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-free": "^6.5.2",
+    "axios": "^1.7.2",
+    "bootstrap": "^5.3.3",
+    "got": "^14.3.0",
+    "http2": "^3.3.7",
+    "mongoose": "^8.3.4",
+    "net": "^1.0.2",
+    "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.3"
+    "react-router-dom": "^6.23.1",
+    "tls": "^0.0.1"
   },
   "devDependencies": {
     "eslint": "^8",
