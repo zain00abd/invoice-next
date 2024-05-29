@@ -5,8 +5,15 @@ import { useEffect, useState, useRef } from "react";
 import "./style.css";
 import { notFound, useSearchParams } from "next/navigation";
 import axios from "axios";
+import moment from "moment"
+
+
+console.log(moment().format("D/MM/YYYY"))
+
+
 
 const Page = ({ params }) => {
+  const [today, settoday] = useState(moment().format("D/MM/YYYY"));
   const [name, setname] = useState(null);
   const [adres, setadres] = useState(null);
   const [phone, setphone] = useState(null);
@@ -17,6 +24,8 @@ const Page = ({ params }) => {
   const pathname = useSearchParams();
   const buttonRef = useRef(null);
   const [plusinvoice, setplusinvoice] = useState(0);
+  const [showinvoice, setshowinvoice] = useState("d-none");
+  
   
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
@@ -25,6 +34,8 @@ const Page = ({ params }) => {
   const addinvoice = () =>{
     console.log("zain")
     buttonRef.current.click();
+    setshowinvoice("")
+    addItem()
   }
   
   useEffect(() => {
@@ -72,14 +83,15 @@ const Page = ({ params }) => {
   
   
   const [indexli, setindexli] = useState(0);
-  const [items, setItems] = useState([{ id: 0}]);
+  const [items, setItems] = useState([]);
   
   const addItem = () => {
     setindexli(prevCounter => prevCounter + 1);
     const newItem = {
       id: indexli + 1,
+      classi: "list-group-item-danger"
     };
-      console.log(indexli)
+      console.log("indexli")
       setItems([...items, newItem]);
       console.log(items)
     }
@@ -141,10 +153,13 @@ const handelarr = (id, value) => {
 
 
 const deleteitem = (item) =>{
-  setindexli(prevCounter => prevCounter - 1)
-  // handelarr()
-  console.log(item.nextElement)
-  item.remove()
+
+
+  let indexdeletitem = +item.id
+  handelarr(`inv_des_${indexdeletitem}`,null)
+
+  handelarr(`inv_mon_${indexdeletitem}`,null)
+  item.parentElement.remove()
   
 }
 
@@ -429,7 +444,7 @@ const deleteitem = (item) =>{
             );
           })}
 
-          <h3
+          {/* <h3
             style={{
               margin: "auto",
               textAlign: "center",
@@ -439,12 +454,12 @@ const deleteitem = (item) =>{
           >
             {" "}
             لم يتم تسجيل فواتير بعد{" "}
-          </h3>
+          </h3> */}
           {/* style add invoice */}
 
           
           <div
-            className=""
+            className={showinvoice}
             style={{
               backgroundColor: "rgba(196, 196, 196, 0.349)",
               margin: "20px ,0px",
@@ -474,8 +489,9 @@ const deleteitem = (item) =>{
               <div key={1}>
               
                 {items.map((item, index) => (
-                    <div key={index}>
-                        <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">
+                  <div className="" key={index}>
+                      
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${item.classi}`}>
                             <input
                                 onChange={(e) =>{
                                   handelarr(e.target.id, e.target.value)
@@ -504,7 +520,7 @@ const deleteitem = (item) =>{
 
                         <div className="vr" style={{left: "40px", position:"absolute", height:"25px"}} />
 
-                        <button onClick={(e) =>{ deleteitem(e.currentTarget.parentElement) }} className="btn" style={{position: 'absolute' ,left:'0px'}}>
+                        <button id={item.id} onClick={(e) =>{ deleteitem(e.currentTarget) }} className="btn" style={{position: 'absolute' ,left:'0px'}}>
                         <i className="fa-regular fa-circle-xmark fa-lg" style={{color: "#800000",}} ></i>
                         </button>
 
@@ -528,7 +544,7 @@ const deleteitem = (item) =>{
                     color: "rgb(0, 110, 46)",
                   }}
                   id="date1"
-                ></div>
+                >{today}</div>
                 <button
                   onClick={() =>{
                     addItem()
