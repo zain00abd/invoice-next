@@ -18,7 +18,6 @@ const Page = ({ params }) => {
   const buttonRef = useRef(null);
   const [plusinvoice, setplusinvoice] = useState(0);
   
-
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
@@ -27,7 +26,7 @@ const Page = ({ params }) => {
     console.log("zain")
     buttonRef.current.click();
   }
-
+  
   useEffect(() => {
     const getData = async () => {
       try {
@@ -39,13 +38,13 @@ const Page = ({ params }) => {
         setadres(result.addres);
         setphone(result.phone);
         setarrinvoice(JSON.parse(result.arrinvoce));
-
+        
         const getmony = JSON.parse(result.arrinvoce);
         // console.log("************user************");
         let totalarruser = 0;
         let arrinvo = [];
         let dateinvoice = [];
-
+        
         getmony.forEach((arrmoney) => {
           dateinvoice.push(arrmoney.date)
           const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
@@ -55,7 +54,7 @@ const Page = ({ params }) => {
         setCurrentTotal(arrinvo);
         setdateinv(dateinvoice)
 
-
+        
       } catch (error) {
         if (error.response && error.response.status === 404) {
           notFound();
@@ -65,20 +64,24 @@ const Page = ({ params }) => {
       }
     };
     settotal(pathname.toString().replace("=", ""));
-
+    
     getData();
   }, [params.id, pathname]);
-
-
-
   
-    const [items, setItems] = useState([{ id: 1}]);
-
-    const addItem = () => {
-        const newItem = {
-            id: items.length + 1,
-        };
-        setItems([...items, newItem]);
+  
+  
+  
+  const [indexli, setindexli] = useState(0);
+  const [items, setItems] = useState([{ id: 0}]);
+  
+  const addItem = () => {
+    setindexli(prevCounter => prevCounter + 1);
+    const newItem = {
+      id: indexli + 1,
+    };
+      console.log(indexli)
+      setItems([...items, newItem]);
+      console.log(items)
     }
 
 
@@ -103,7 +106,7 @@ const handelarr = (id, value) => {
   }
 
   let namearr = id.split("_")[1];
-  let indexarr = parseInt(id.split("_")[2], 10) -1; // تأكد من تحويل الفهرس إلى عدد صحيح
+  let indexarr = parseInt(id.split("_")[2], 10); // تأكد من تحويل الفهرس إلى عدد صحيح
   
   if (namearr === 'des') {
     arrdes[indexarr] = value;
@@ -137,7 +140,13 @@ const handelarr = (id, value) => {
 };
 
 
-
+const deleteitem = (item) =>{
+  setindexli(prevCounter => prevCounter - 1)
+  // handelarr()
+  console.log(item.nextElement)
+  item.remove()
+  
+}
 
 
 
@@ -464,8 +473,8 @@ const handelarr = (id, value) => {
 
               <div key={1}>
               
-                {items.map(item => (
-                    <div key={item.id}>
+                {items.map((item, index) => (
+                    <div key={index}>
                         <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">
                             <input
                                 onChange={(e) =>{
@@ -492,7 +501,14 @@ const handelarr = (id, value) => {
                                 id={`inv_mon_${item.id}`}
                                 defaultValue={item.value2}
                             />
-                        </li>
+
+                        <div className="vr" style={{left: "40px", position:"absolute", height:"25px"}} />
+
+                        <button onClick={(e) =>{ deleteitem(e.currentTarget.parentElement) }} className="btn" style={{position: 'absolute' ,left:'0px'}}>
+                        <i className="fa-regular fa-circle-xmark fa-lg" style={{color: "#800000",}} ></i>
+                        </button>
+
+                        </li>                
                     </div>
                 ))}
             
