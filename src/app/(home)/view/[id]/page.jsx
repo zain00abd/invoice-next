@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./style.css";
 import { notFound, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -12,12 +12,21 @@ const Page = ({ params }) => {
   const [phone, setphone] = useState(null);
   const [total, settotal] = useState(null);
   const [arrinvoice, setarrinvoice] = useState([]);
+  const [dateinv, setdateinv] = useState([]);
   const [currentTotal, setCurrentTotal] = useState(0);
   const pathname = useSearchParams();
+  const buttonRef = useRef(null);
+  const [plusinvoice, setplusinvoice] = useState(0);
+  
 
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
+
+  const addinvoice = () =>{
+    console.log("zain")
+    buttonRef.current.click();
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -35,13 +44,16 @@ const Page = ({ params }) => {
         // console.log("************user************");
         let totalarruser = 0;
         let arrinvo = [];
+        let dateinvoice = [];
 
         getmony.forEach((arrmoney) => {
+          dateinvoice.push(arrmoney.date)
           const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
           totalarruser += totalonearr;
           arrinvo.push(totalarruser);
         });
         setCurrentTotal(arrinvo);
+        setdateinv(dateinvoice)
 
 
       } catch (error) {
@@ -56,6 +68,79 @@ const Page = ({ params }) => {
 
     getData();
   }, [params.id, pathname]);
+
+
+
+  
+    const [items, setItems] = useState([{ id: 1}]);
+
+    const addItem = () => {
+        const newItem = {
+            id: items.length + 1,
+        };
+        setItems([...items, newItem]);
+    }
+
+
+
+
+let arrdes = [];
+let arrmoney = [];
+let arrdesfilter = [];
+let arrmoneyfiletr = [];
+
+useEffect(() => {
+  sessionStorage.removeItem("arr1")
+  sessionStorage.removeItem("arr2")
+}, []);
+
+
+const handelarr = (id, value) => {
+  
+  if(sessionStorage.getItem("arr1") !== null || sessionStorage.getItem("arr2") !== null){
+    arrmoney = JSON.parse(sessionStorage.getItem("arr1"))
+    arrdes = JSON.parse(sessionStorage.getItem("arr2"))
+  }
+
+  let namearr = id.split("_")[1];
+  let indexarr = parseInt(id.split("_")[2], 10) -1; // تأكد من تحويل الفهرس إلى عدد صحيح
+  
+  if (namearr === 'des') {
+    arrdes[indexarr] = value;
+  } else {
+    arrmoney[indexarr] = +value;
+  }
+  
+  
+  sessionStorage.setItem("arr1", JSON.stringify(arrmoney))
+  sessionStorage.setItem("arr2", JSON.stringify(arrdes))
+  console.log(JSON.stringify(arrdesfilter) + ' / ' + JSON.stringify(arrmoneyfiletr));
+
+  filterarr();
+};
+
+  const filterarr = () => {
+  let arrdesfilter = arrdes.filter(function (value) {
+    return value !== null && value !== undefined && value !== '';
+  });
+
+  let arrmoneyfilter = arrmoney.filter(function (value) {
+    return value !== null && value !== undefined && value !== '' && value !== 0;
+  });
+
+  console.log('Filtered arrdes:', JSON.stringify(arrdesfilter));
+  console.log('Filtered arrmoney:', JSON.stringify(arrmoneyfilter));
+  
+  setplusinvoice(arrmoneyfilter.reduce((accumulator, currentValue) => accumulator + currentValue, 0))
+  console.log(arrmoneyfilter.reduce((acc, num) => acc + num, 0))
+  
+};
+
+
+
+
+
+
 
   return (
     <>
@@ -96,6 +181,9 @@ const Page = ({ params }) => {
                   className="btn btn-danger m-auto w-60 col-5"
                   style={{ height: 90, padding: 25 }}
                   id="inv_unprice"
+                  onClick={() =>{
+                    addinvoice()
+                  }}
                 >
                   اضافة فاتورة
                   <i
@@ -117,6 +205,7 @@ const Page = ({ params }) => {
             </div>
             <div className="modal-footer">
               <button
+                ref={buttonRef}
                 id="btn_cname"
                 type="button"
                 className="btn btn-secondary text-center m-auto"
@@ -229,13 +318,16 @@ const Page = ({ params }) => {
                           border: "none",
                           color: "#000000",
                         }}
+                        
                         type="button"
                         className="btn"
                         data-bs-container="body"
                         data-bs-toggle="popover"
                         data-bs-placement="right"
                         data-bs-content="thth"
-                      ></button>
+                      >
+                        {dateinv[index - 1]}
+                      </button>
                     </li>
                   </div>
                 ) : (
@@ -340,6 +432,8 @@ const Page = ({ params }) => {
             لم يتم تسجيل فواتير بعد{" "}
           </h3>
           {/* style add invoice */}
+
+          
           <div
             className=""
             style={{
@@ -349,7 +443,7 @@ const Page = ({ params }) => {
             }}
           >
             <ul
-              className="list-group mt-4 d-none"
+              className="list-group mt-4"
               id="inv_new"
               style={{ left: 20, position: "relative" }}
             >
@@ -364,7 +458,50 @@ const Page = ({ params }) => {
                 <div style={{ width: "50%", textAlign: "center" }}>المبلغ</div>
               </li>
               {/*** body invoce ***/}
-              <div id="d_1"></div>
+              {/*** inp add ***/}
+
+              
+
+              <div key={1}>
+              
+                {items.map(item => (
+                    <div key={item.id}>
+                        <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">
+                            <input
+                                onChange={(e) =>{
+                                  handelarr(e.target.id, e.target.value)
+                                }}
+                                className=""
+                                type="text"
+                                style={{ width: "48%", textAlign: "center" }}
+                                id={`inv_des_${item.id}`}
+                                defaultValue={item.value1}
+                            />
+
+                            <div className="vr" />
+                            <input
+                                onChange={(e) =>{
+                                  handelarr(e.target.id, e.target.value)
+                                }}
+                                className=""
+                                type="text"
+                                name="rtty"
+                                pattern="[0-9]*"
+                                inputMode="numeric"
+                                style={{ width: "48%", textAlign: "center" }}
+                                id={`inv_mon_${item.id}`}
+                                defaultValue={item.value2}
+                            />
+                        </li>
+                    </div>
+                ))}
+            
+                      
+              </div>
+
+
+
+
               {/*** body invoce ***/}
               {/* end invoce */}
               <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-secondary">
@@ -377,6 +514,9 @@ const Page = ({ params }) => {
                   id="date1"
                 ></div>
                 <button
+                  onClick={() =>{
+                    addItem()
+                  }}
                   id="btn_addinv"
                   type="button"
                   className="btn btn-warning rounded-circle"
@@ -386,12 +526,13 @@ const Page = ({ params }) => {
                 <div style={{ width: "50%", textAlign: "center" }}>
                   الاجمالي:
                   <small className="text-danger" id="total_inv">
-                    0
+                    {plusinvoice}
                   </small>
                 </div>
               </li>
             </ul>
           </div>
+
         </div>
         <ul className="list-group" style={{ marginTop: 180 }}>
           <li
