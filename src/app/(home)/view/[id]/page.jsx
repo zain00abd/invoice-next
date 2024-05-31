@@ -22,6 +22,8 @@ const Page = ({ params }) => {
   const buttonRef = useRef(null);
   const [plusinvoice, setplusinvoice] = useState(0);
   const [showinvoice, setshowinvoice] = useState("d-none");
+  const inputRef  = useRef(null);
+  
 
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
@@ -84,6 +86,7 @@ const Page = ({ params }) => {
   const [indexli, setindexli] = useState(0);
   const [items, setItems] = useState([]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
     setindexli((prevCounter) => prevCounter + 1);
     const newItem = {
@@ -95,6 +98,13 @@ const Page = ({ params }) => {
     setItems([...items, newItem]);
     console.log(items);
   };
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [addItem]);
+  
 
   let arrdes = [];
   let arrmoney = [];
@@ -520,6 +530,8 @@ const Page = ({ params }) => {
                         style={{ width: "48%", textAlign: "center" }}
                         id={`inv_des_${item.id}`}
                         defaultValue={item.valueinp}
+                        ref={inputRef}
+                        
                       />
 
                       <div className="vr" />
@@ -584,16 +596,22 @@ const Page = ({ params }) => {
                 >
                   {today}
                 </div>
-                <button
-                  onClick={() => {
-                    addItem(`${InvMode}`, "");
-                  }}
-                  id="btn_addinv"
-                  type="button"
-                  className="btn btn-warning rounded-circle"
-                >
-                  <i className="fa-solid fa-plus" />
-                </button>
+
+                {InvMode == "danger" && (
+                  <>
+                    <button
+                      onClick={() => {
+                        addItem(`${InvMode}`, "");
+                      }}
+                      id="btn_addinv"
+                      type="button"
+                      className="btn btn-warning rounded-circle"
+                    >
+                      <i className="fa-solid fa-plus" />
+                    </button>
+                  </>
+                )}
+
                 <div style={{ width: "50%", textAlign: "center" }}>
                   الاجمالي:
                   <small className="text-danger" id="total_inv">
