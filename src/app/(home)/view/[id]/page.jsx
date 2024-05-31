@@ -6,6 +6,7 @@ import "./style.css";
 import { notFound, useSearchParams } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
+import Link from "next/link";
 
 console.log(moment().format("D/MM/YYYY"));
 
@@ -22,7 +23,10 @@ const Page = ({ params }) => {
   const buttonRef = useRef(null);
   const [plusinvoice, setplusinvoice] = useState(0);
   const [showinvoice, setshowinvoice] = useState("d-none");
-  const inputRef  = useRef(null);
+  const inputRef = useRef(null);
+  const [invoices, setinvoices] = useState(0);
+  const [allindexarr, setallindexarr] = useState(0);
+  
   
 
   useEffect(() => {
@@ -41,12 +45,9 @@ const Page = ({ params }) => {
     }
     console.log("zain");
     buttonRef.current.click();
-    
+
     setshowinvoice("");
-    inpfucas()
-
-
-    
+    inpfucas();
   };
 
   useEffect(() => {
@@ -93,33 +94,26 @@ const Page = ({ params }) => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
-
     setindexli((prevCounter) => prevCounter + 1);
     const newItem = {
       id: indexli + 1,
       classi: `list-group-item-${mode}`,
       valueinp: `${value}`,
-      
     };
 
-    
     console.log("indexli");
     setItems([...items, newItem]);
     console.log(items);
-    
-    inpfucas()
+    setinvoices(prevCounter => prevCounter + 2)
   };
 
-
-  const inpfucas = () =>{
+  const inpfucas = () => {
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.focus();
       }
     }, 0);
-  }
-
-  
+  };
 
   let arrdes = [];
   let arrmoney = [];
@@ -129,7 +123,6 @@ const Page = ({ params }) => {
   useEffect(() => {
     sessionStorage.removeItem("arr1");
     sessionStorage.removeItem("arr2");
-
   }, []);
 
   const handelarr = (id, value) => {
@@ -173,6 +166,8 @@ const Page = ({ params }) => {
     console.log("Filtered arrdes:", arrdesfilter);
     console.log("Filtered arrmoney:", arrmoneyfilter);
 
+    setallindexarr(arrdesfilter.length + arrmoneyfilter.length)
+
     setplusinvoice(
       arrmoneyfilter.reduce(
         (accumulator, currentValue) => accumulator + currentValue,
@@ -188,6 +183,7 @@ const Page = ({ params }) => {
 
     handelarr(`inv_mon_${indexdeletitem}`, null);
     item.parentElement.remove();
+    setinvoices(prevCounter => prevCounter - 2)
   };
 
   return (
@@ -316,12 +312,15 @@ const Page = ({ params }) => {
 
           {arrinvoice.map((arr, index) => {
             return (
+
               <ul
-                className="list-group mb-4 mt-4"
-                style={{ padding: 0 }}
-                key={index}
+              className="list-group mb-4 mt-4"
+              style={{ padding: 0 }}
+              key={index}
               >
                 {/* top invoce */}
+                {invoices}
+                {allindexarr}
                 <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-primary border border-1 border-primary">
                   <div style={{ width: "50%", textAlign: "center" }}>الوصف</div>
                   <div className="vr" />
@@ -541,14 +540,12 @@ const Page = ({ params }) => {
                         onChange={(e) => {
                           handelarr(e.target.id, e.target.value);
                         }}
-
                         className=""
                         type="text"
                         style={{ width: "48%", textAlign: "center" }}
                         id={`inv_des_${item.id}`}
                         defaultValue={item.valueinp}
                         ref={inputRef}
-                        
                       />
 
                       <div className="vr" />
@@ -619,7 +616,6 @@ const Page = ({ params }) => {
                     <button
                       onClick={() => {
                         addItem(`${InvMode}`, "");
-                        
                       }}
                       id="btn_addinv"
                       type="button"
@@ -652,57 +648,83 @@ const Page = ({ params }) => {
                 color: "rgb(0, 110, 46)",
               }}
             >
-              <button
-                type="button"
-                className="btn btn-success w-100"
-                id="btn_whats"
-              >
-                <i
-                  className="fa-brands fa-whatsapp fa-xl"
-                  style={{ color: "#ffffff" }}
-                />
-                WhatsApp
-              </button>
-              <a className="d-none" role="button" id="btn_save">
-                حفظ التغييرات
-              </a>
+              {InvMode === "danger" || InvMode === "success" ? (
+                <>
+                  <Link
+                    
+                    href="#"
+                    className={`btn btn-primary w-100 ${allindexarr != invoices ? "disabled" : ""}`}
+                    role="button"
+                    id="btn_save"
+                  >
+                    حفظ التغييرات
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="btn btn-success w-100"
+                    id="btn_whats"
+                  >
+                    <i
+                      className="fa-brands fa-whatsapp fa-xl"
+                      style={{ color: "#ffffff" }}
+                    />
+                    WhatsApp
+                  </button>
+                </>
+              )}
             </div>
+
             {/* <button onclick="datature()">df</button> */}
             {/* <button class=" rounded-circle" style="position: relative; bottom: 30px;background: linear-gradient(to right, #0f0094,rgb(0, 32, 102)); border: none; transform: scale(1.5);"><i class="fa-solid fa-plus" style="color: #FFD43B;"></i></button> */}
+
             <div
               style={{ width: "45%", textAlign: "center" }}
               id="gro_btn_invoice"
             >
-              <div
-                className="dropup-center dropup"
-                id="btn_section"
-                style={{ width: "100%" }}
-              >
-                <button
-                  style={{
-                    width: "100%",
-                    fontWeight: 600,
-                    letterSpacing: "1.1px",
-                  }}
-                  className="btn btn-danger"
-                  type="button"
-                  data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop"
-                >
-                  <i
-                    className="fa-solid fa-sack-dollar fa-lg"
-                    style={{ color: "#ffffff" }}
-                  />
-                  {total}
-                </button>
-                <small className="d-none" id="ttt-1">
-                  4546
-                </small>
-              </div>
-              <a className="d-none" href="/view" role="button" id="btn_close">
-                {" "}
-                الغاء{" "}
-              </a>
+              {InvMode === "danger" || InvMode === "success" ? (
+                <>
+                  <Link
+                    className="btn btn-danger w-100"
+                    href="/view"
+                    role="button"
+                    id="btn_close"
+                  >
+                    الغاء
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <div
+                    className="dropup-center dropup"
+                    id="btn_section"
+                    style={{ width: "100%" }}
+                  >
+                    <button
+                      style={{
+                        width: "100%",
+                        fontWeight: 600,
+                        letterSpacing: "1.1px",
+                      }}
+                      className="btn btn-danger"
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#staticBackdrop"
+                    >
+                      <i
+                        className="fa-solid fa-sack-dollar fa-lg"
+                        style={{ color: "#ffffff" }}
+                      />
+                      {total}
+                    </button>
+                    <small className="d-none" id="ttt-1">
+                      4546
+                    </small>
+                  </div>
+                </>
+              )}
             </div>
           </li>
         </ul>
