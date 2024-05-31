@@ -5,12 +5,9 @@ import { useEffect, useState, useRef } from "react";
 import "./style.css";
 import { notFound, useSearchParams } from "next/navigation";
 import axios from "axios";
-import moment from "moment"
+import moment from "moment";
 
-
-console.log(moment().format("D/MM/YYYY"))
-
-
+console.log(moment().format("D/MM/YYYY"));
 
 const Page = ({ params }) => {
   const [today, settoday] = useState(moment().format("D/MM/YYYY"));
@@ -25,19 +22,26 @@ const Page = ({ params }) => {
   const buttonRef = useRef(null);
   const [plusinvoice, setplusinvoice] = useState(0);
   const [showinvoice, setshowinvoice] = useState("d-none");
-  
-  
+
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
 
-  const addinvoice = () =>{
-    console.log("zain")
+  const [InvMode, setInvMode] = useState("");
+
+  const addinvoice = (modeinvoice) => {
+    setshowinvoice("");
+    if (modeinvoice === "minis") {
+      setInvMode("danger");
+      addItem(`danger`, "");
+    } else {
+      setInvMode("success");
+      addItem(`success`, "تسديد مبلغ");
+    }
+    console.log("zain");
     buttonRef.current.click();
-    setshowinvoice("")
-    addItem()
-  }
-  
+  };
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -49,23 +53,21 @@ const Page = ({ params }) => {
         setadres(result.addres);
         setphone(result.phone);
         setarrinvoice(JSON.parse(result.arrinvoce));
-        
+
         const getmony = JSON.parse(result.arrinvoce);
         // console.log("************user************");
         let totalarruser = 0;
         let arrinvo = [];
         let dateinvoice = [];
-        
+
         getmony.forEach((arrmoney) => {
-          dateinvoice.push(arrmoney.date)
+          dateinvoice.push(arrmoney.date);
           const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
           totalarruser += totalonearr;
           arrinvo.push(totalarruser);
         });
         setCurrentTotal(arrinvo);
-        setdateinv(dateinvoice)
-
-        
+        setdateinv(dateinvoice);
       } catch (error) {
         if (error.response && error.response.status === 404) {
           notFound();
@@ -75,96 +77,92 @@ const Page = ({ params }) => {
       }
     };
     settotal(pathname.toString().replace("=", ""));
-    
+
     getData();
   }, [params.id, pathname]);
-  
-  
-  
-  
+
   const [indexli, setindexli] = useState(0);
   const [items, setItems] = useState([]);
-  
-  const addItem = () => {
-    setindexli(prevCounter => prevCounter + 1);
+
+  const addItem = (mode, value) => {
+    setindexli((prevCounter) => prevCounter + 1);
     const newItem = {
       id: indexli + 1,
-      classi: "list-group-item-danger"
+      classi: `list-group-item-${mode}`,
+      valueinp: `${value}`,
     };
-      console.log("indexli")
-      setItems([...items, newItem]);
-      console.log(items)
+    console.log("indexli");
+    setItems([...items, newItem]);
+    console.log(items);
+  };
+
+  let arrdes = [];
+  let arrmoney = [];
+  let arrdesfilter = [];
+  let arrmoneyfiletr = [];
+
+  useEffect(() => {
+    sessionStorage.removeItem("arr1");
+    sessionStorage.removeItem("arr2");
+  }, []);
+
+  const handelarr = (id, value) => {
+    if (
+      sessionStorage.getItem("arr1") !== null ||
+      sessionStorage.getItem("arr2") !== null
+    ) {
+      arrmoney = JSON.parse(sessionStorage.getItem("arr1"));
+      arrdes = JSON.parse(sessionStorage.getItem("arr2"));
     }
 
+    let namearr = id.split("_")[1];
+    let indexarr = parseInt(id.split("_")[2], 10); // تأكد من تحويل الفهرس إلى عدد صحيح
 
+    if (namearr === "des") {
+      arrdes[indexarr] = value;
+    } else {
+      arrmoney[indexarr] = +-value;
+    }
 
+    sessionStorage.setItem("arr1", JSON.stringify(arrmoney));
+    sessionStorage.setItem("arr2", JSON.stringify(arrdes));
+    console.log(
+      JSON.stringify(arrdesfilter) + " / " + JSON.stringify(arrmoneyfiletr)
+    );
 
-let arrdes = [];
-let arrmoney = [];
-let arrdesfilter = [];
-let arrmoneyfiletr = [];
-
-useEffect(() => {
-  sessionStorage.removeItem("arr1")
-  sessionStorage.removeItem("arr2")
-}, []);
-
-
-const handelarr = (id, value) => {
-  
-  if(sessionStorage.getItem("arr1") !== null || sessionStorage.getItem("arr2") !== null){
-    arrmoney = JSON.parse(sessionStorage.getItem("arr1"))
-    arrdes = JSON.parse(sessionStorage.getItem("arr2"))
-  }
-
-  let namearr = id.split("_")[1];
-  let indexarr = parseInt(id.split("_")[2], 10); // تأكد من تحويل الفهرس إلى عدد صحيح
-  
-  if (namearr === 'des') {
-    arrdes[indexarr] = value;
-  } else {
-    arrmoney[indexarr] = +value;
-  }
-  
-  
-  sessionStorage.setItem("arr1", JSON.stringify(arrmoney))
-  sessionStorage.setItem("arr2", JSON.stringify(arrdes))
-  console.log(JSON.stringify(arrdesfilter) + ' / ' + JSON.stringify(arrmoneyfiletr));
-
-  filterarr();
-};
+    filterarr();
+  };
 
   const filterarr = () => {
-  let arrdesfilter = arrdes.filter(function (value) {
-    return value !== null && value !== undefined && value !== '';
-  });
+    let arrdesfilter = arrdes.filter(function (value) {
+      return value !== null && value !== undefined && value !== "";
+    });
 
-  let arrmoneyfilter = arrmoney.filter(function (value) {
-    return value !== null && value !== undefined && value !== '' && value !== 0;
-  });
+    let arrmoneyfilter = arrmoney.filter(function (value) {
+      return (
+        value !== null && value !== undefined && value !== "" && value !== 0
+      );
+    });
 
-  console.log('Filtered arrdes:', JSON.stringify(arrdesfilter));
-  console.log('Filtered arrmoney:', JSON.stringify(arrmoneyfilter));
-  
-  setplusinvoice(arrmoneyfilter.reduce((accumulator, currentValue) => accumulator + currentValue, 0))
-  console.log(arrmoneyfilter.reduce((acc, num) => acc + num, 0))
-  
-};
+    console.log("Filtered arrdes:", arrdesfilter);
+    console.log("Filtered arrmoney:", arrmoneyfilter);
 
+    setplusinvoice(
+      arrmoneyfilter.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        0
+      )
+    );
+    console.log(arrmoneyfilter.reduce((acc, num) => acc + num, 0));
+  };
 
-const deleteitem = (item) =>{
+  const deleteitem = (item) => {
+    let indexdeletitem = +item.id;
+    handelarr(`inv_des_${indexdeletitem}`, null);
 
-
-  let indexdeletitem = +item.id
-  handelarr(`inv_des_${indexdeletitem}`,null)
-
-  handelarr(`inv_mon_${indexdeletitem}`,null)
-  item.parentElement.remove()
-  
-}
-
-
-
+    handelarr(`inv_mon_${indexdeletitem}`, null);
+    item.parentElement.remove();
+  };
 
   return (
     <>
@@ -194,6 +192,9 @@ const deleteitem = (item) =>{
                   className="btn btn-success m-auto w-60 col-5"
                   style={{ height: 90, padding: 25 }}
                   id="inv_price"
+                  onClick={() => {
+                    addinvoice("plus");
+                  }}
                 >
                   تسديد مبلغ
                   <i
@@ -205,8 +206,8 @@ const deleteitem = (item) =>{
                   className="btn btn-danger m-auto w-60 col-5"
                   style={{ height: 90, padding: 25 }}
                   id="inv_unprice"
-                  onClick={() =>{
-                    addinvoice()
+                  onClick={() => {
+                    addinvoice("minis");
                   }}
                 >
                   اضافة فاتورة
@@ -323,14 +324,28 @@ const deleteitem = (item) =>{
 
                       <div className="vr" />
                       <input
-                        className={`${currentTotal[index - 1] < 0 ? "text-danger" : currentTotal[index - 1] > 0 ? "text-success" : ""}`}
+                        className={`${
+                          currentTotal[index - 1] < 0
+                            ? "text-danger"
+                            : currentTotal[index - 1] > 0
+                            ? "text-success"
+                            : ""
+                        }`}
                         type="text"
                         name="rtty"
                         pattern="[0-9]*"
                         inputMode="numeric"
-                        style={{ width: "50%", textAlign: "center", direction:"ltr" }}
+                        style={{
+                          width: "50%",
+                          textAlign: "center",
+                          direction: "ltr",
+                        }}
                         id="inv_Ms"
-                        defaultValue={currentTotal[index - 1] > 0 ? "+" + currentTotal[index - 1]  : currentTotal[index - 1]}
+                        defaultValue={
+                          currentTotal[index - 1] > 0
+                            ? "+" + currentTotal[index - 1]
+                            : currentTotal[index - 1]
+                        }
                       />
 
                       <div className="vr" />
@@ -342,7 +357,6 @@ const deleteitem = (item) =>{
                           border: "none",
                           color: "#000000",
                         }}
-                        
                         type="button"
                         className="btn"
                         data-bs-container="body"
@@ -383,7 +397,11 @@ const deleteitem = (item) =>{
                           name="rtty"
                           pattern="[0-9]*"
                           inputMode="numeric"
-                          style={{ width: "50%", textAlign: "center" }}
+                          style={{
+                            width: "50%",
+                            textAlign: "center",
+                            direction: "ltr",
+                          }}
                           id="inv_Ms"
                           defaultValue={Math.abs(arr.money[Larr])}
                         />
@@ -435,7 +453,11 @@ const deleteitem = (item) =>{
                   </div>
                   <div style={{ width: "50%", textAlign: "center" }}>
                     الاجمالي:
-                    <small className="text-danger" id="" style={{ direction:"ltr"}}>
+                    <small
+                      className="text-danger"
+                      id=""
+                      style={{ direction: "ltr" }}
+                    >
                       {currentTotal[index]}
                     </small>
                   </div>
@@ -457,7 +479,6 @@ const deleteitem = (item) =>{
           </h3> */}
           {/* style add invoice */}
 
-          
           <div
             className={showinvoice}
             style={{
@@ -474,7 +495,7 @@ const deleteitem = (item) =>{
               <h3 className="text-center text-white">اضافة فاتورة</h3>
               {/* top invoce */}
               <li
-                className="list-group-item d-flex justify-content-between align-items-center"
+                className="list-group-item d-flex justify-content-between align-items-center list-group-item-primary border border-1 border-primary"
                 id="dis_mode"
               >
                 <div style={{ width: "50%", textAlign: "center" }}>الوصف</div>
@@ -484,55 +505,71 @@ const deleteitem = (item) =>{
               {/*** body invoce ***/}
               {/*** inp add ***/}
 
-              
-
               <div key={1}>
-              
                 {items.map((item, index) => (
                   <div className="" key={index}>
-                      
-                        <li className={`list-group-item d-flex justify-content-between align-items-center ${item.classi}`}>
-                            <input
-                                onChange={(e) =>{
-                                  handelarr(e.target.id, e.target.value)
-                                }}
-                                className=""
-                                type="text"
-                                style={{ width: "48%", textAlign: "center" }}
-                                id={`inv_des_${item.id}`}
-                                defaultValue={item.value1}
-                            />
+                    <li
+                      className={`list-group-item d-flex justify-content-between align-items-center ${item.classi}`}
+                    >
+                      <input
+                        onChange={(e) => {
+                          handelarr(e.target.id, e.target.value);
+                        }}
+                        className=""
+                        type="text"
+                        style={{ width: "48%", textAlign: "center" }}
+                        id={`inv_des_${item.id}`}
+                        defaultValue={item.valueinp}
+                      />
 
-                            <div className="vr" />
-                            <input
-                                onChange={(e) =>{
-                                  handelarr(e.target.id, e.target.value)
-                                }}
-                                className=""
-                                type="text"
-                                name="rtty"
-                                pattern="[0-9]*"
-                                inputMode="numeric"
-                                style={{ width: "48%", textAlign: "center" }}
-                                id={`inv_mon_${item.id}`}
-                                defaultValue={item.value2}
-                            />
+                      <div className="vr" />
+                      <input
+                        onChange={(e) => {
+                          handelarr(e.target.id, e.target.value);
+                        }}
+                        className=""
+                        type="text"
+                        name="rtty"
+                        pattern="[0-9]*"
+                        inputMode="numeric"
+                        style={{
+                          width: "48%",
+                          textAlign: "center",
+                          direction: "ltr",
+                        }}
+                        id={`inv_mon_${item.id}`}
+                        defaultValue={item.value2}
+                      />
 
-                        <div className="vr" style={{left: "40px", position:"absolute", height:"25px"}} />
-
-                        <button id={item.id} onClick={(e) =>{ deleteitem(e.currentTarget) }} className="btn" style={{position: 'absolute' ,left:'0px'}}>
-                        <i className="fa-regular fa-circle-xmark fa-lg" style={{color: "#800000",}} ></i>
-                        </button>
-
-                        </li>                
-                    </div>
+                      {InvMode == "danger" && (
+                        <>
+                          <div
+                            className="vr"
+                            style={{
+                              left: "40px",
+                              position: "absolute",
+                              height: "25px",
+                            }}
+                          />
+                          <button
+                            id={item.id}
+                            onClick={(e) => {
+                              deleteitem(e.currentTarget);
+                            }}
+                            className="btn"
+                            style={{ position: "absolute", left: "0px" }}
+                          >
+                            <i
+                              className="fa-regular fa-circle-xmark fa-lg"
+                              style={{ color: "#800000" }}
+                            ></i>
+                          </button>
+                        </>
+                      )}
+                    </li>
+                  </div>
                 ))}
-            
-                      
               </div>
-
-
-
 
               {/*** body invoce ***/}
               {/* end invoce */}
@@ -544,10 +581,12 @@ const deleteitem = (item) =>{
                     color: "rgb(0, 110, 46)",
                   }}
                   id="date1"
-                >{today}</div>
+                >
+                  {today}
+                </div>
                 <button
-                  onClick={() =>{
-                    addItem()
+                  onClick={() => {
+                    addItem(`${InvMode}`, "");
                   }}
                   id="btn_addinv"
                   type="button"
@@ -564,7 +603,6 @@ const deleteitem = (item) =>{
               </li>
             </ul>
           </div>
-
         </div>
         <ul className="list-group" style={{ marginTop: 180 }}>
           <li
