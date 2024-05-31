@@ -116,7 +116,7 @@ const Page = ({ params }) => {
       if (inputRef.current) {
         inputRef.current.focus();
       }
-    }, 350);
+    }, 0);
   }
 
   
