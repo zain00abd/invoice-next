@@ -42,6 +42,7 @@ const Page = ({ params }) => {
     } else {
       setInvMode("success");
       addItem(`success`, "تسديد مبلغ");
+      handelarr("inv_des_0", "تسديد مبلغ")
     }
     console.log("zain");
     buttonRef.current.click();
@@ -140,7 +141,11 @@ const Page = ({ params }) => {
     if (namearr === "des") {
       arrdes[indexarr] = value;
     } else {
+      if(InvMode == "danger")
       arrmoney[indexarr] = +-value;
+      else
+      arrmoney[indexarr] = +value;
+
     }
 
     sessionStorage.setItem("arr1", JSON.stringify(arrmoney));
@@ -159,7 +164,7 @@ const Page = ({ params }) => {
 
     let arrmoneyfilter = arrmoney.filter(function (value) {
       return (
-        value !== null && value !== undefined && value !== "" && value !== 0
+        value !== null && value !== undefined && value !== "" && value !== 0 && isNaN(value)
       );
     });
 
@@ -318,9 +323,6 @@ const Page = ({ params }) => {
               style={{ padding: 0 }}
               key={index}
               >
-                {/* top invoce */}
-                {invoices}
-                {allindexarr}
                 <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-primary border border-1 border-primary">
                   <div style={{ width: "50%", textAlign: "center" }}>الوصف</div>
                   <div className="vr" />
@@ -616,6 +618,7 @@ const Page = ({ params }) => {
                     <button
                       onClick={() => {
                         addItem(`${InvMode}`, "");
+                        inpfucas();
                       }}
                       id="btn_addinv"
                       type="button"
