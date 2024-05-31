@@ -32,7 +32,6 @@ const Page = ({ params }) => {
   const [InvMode, setInvMode] = useState("");
 
   const addinvoice = (modeinvoice) => {
-    setshowinvoice("");
     if (modeinvoice === "minis") {
       setInvMode("danger");
       addItem(`danger`, "");
@@ -42,6 +41,12 @@ const Page = ({ params }) => {
     }
     console.log("zain");
     buttonRef.current.click();
+    
+    setshowinvoice("");
+    inpfucas()
+
+
+    
   };
 
   useEffect(() => {
@@ -88,22 +93,32 @@ const Page = ({ params }) => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
+
     setindexli((prevCounter) => prevCounter + 1);
     const newItem = {
       id: indexli + 1,
       classi: `list-group-item-${mode}`,
       valueinp: `${value}`,
+      
     };
+
+    
     console.log("indexli");
     setItems([...items, newItem]);
     console.log(items);
+    
+    inpfucas()
   };
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [addItem]);
+
+  const inpfucas = () =>{
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 350);
+  }
+
   
 
   let arrdes = [];
@@ -114,6 +129,7 @@ const Page = ({ params }) => {
   useEffect(() => {
     sessionStorage.removeItem("arr1");
     sessionStorage.removeItem("arr2");
+
   }, []);
 
   const handelarr = (id, value) => {
@@ -525,6 +541,7 @@ const Page = ({ params }) => {
                         onChange={(e) => {
                           handelarr(e.target.id, e.target.value);
                         }}
+
                         className=""
                         type="text"
                         style={{ width: "48%", textAlign: "center" }}
@@ -602,6 +619,7 @@ const Page = ({ params }) => {
                     <button
                       onClick={() => {
                         addItem(`${InvMode}`, "");
+                        
                       }}
                       id="btn_addinv"
                       type="button"
