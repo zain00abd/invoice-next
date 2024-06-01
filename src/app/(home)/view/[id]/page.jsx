@@ -10,8 +10,16 @@ import Link from "next/link";
 
 console.log(moment().format("D/MM/YYYY"));
 
+
+    
+
+
+
 const Page = ({ params }) => {
-  const [today, settoday] = useState(moment().format("D/MM/YYYY"));
+  const [today, settoday] = useState("");
+  const [oclock, setoclock] = useState("");
+
+  
   const [name, setname] = useState(null);
   const [adres, setadres] = useState(null);
   const [phone, setphone] = useState(null);
@@ -51,7 +59,9 @@ const Page = ({ params }) => {
     inpfucas();
   };
 
+  
   useEffect(() => {
+
     const getData = async () => {
       try {
         const response = await axios.get(
@@ -62,6 +72,7 @@ const Page = ({ params }) => {
         setadres(result.addres);
         setphone(result.phone);
         setarrinvoice(JSON.parse(result.arrinvoce));
+
 
         const getmony = JSON.parse(result.arrinvoce);
         // console.log("************user************");
@@ -116,15 +127,15 @@ const Page = ({ params }) => {
     }, 0);
   };
 
-  let arrdes = [];
-  let arrmoney = [];
-  let arrdesfilter = [];
-  let arrmoneyfiletr = [];
-
   useEffect(() => {
     sessionStorage.removeItem("arr1");
     sessionStorage.removeItem("arr2");
   }, []);
+
+  let arrdes = [];
+  let arrmoney = [];
+  let arrdesfilter = [];
+  let arrmoneyfiletr = [];
 
   const handelarr = (id, value) => {
     if (
@@ -136,7 +147,7 @@ const Page = ({ params }) => {
     }
 
     let namearr = id.split("_")[1];
-    let indexarr = parseInt(id.split("_")[2], 10); // تأكد من تحويل الفهرس إلى عدد صحيح
+    let indexarr = parseInt(id.split("_")[2], 10); 
 
     if (namearr === "des") {
       arrdes[indexarr] = value;
@@ -150,26 +161,35 @@ const Page = ({ params }) => {
 
     sessionStorage.setItem("arr1", JSON.stringify(arrmoney));
     sessionStorage.setItem("arr2", JSON.stringify(arrdes));
-    console.log(
-      JSON.stringify(arrdesfilter) + " / " + JSON.stringify(arrmoneyfiletr)
-    );
+
 
     filterarr();
   };
 
+  const [description, setdescription] = useState([]);
+  const [money, setmoney] = useState([]);
+  
+
   const filterarr = () => {
+
+    settoday(moment().format("D/MM/YYYY"))
+    setoclock(moment().format('LT'))
+
     let arrdesfilter = arrdes.filter(function (value) {
       return value !== null && value !== undefined && value !== "";
     });
 
     let arrmoneyfilter = arrmoney.filter(function (value) {
       return (
-        value !== null && value !== undefined && value !== "" && value !== 0 && isNaN(value)
+        value !== null && value !== undefined && value !== "" && value !== 0 && !isNaN(value)
       );
     });
 
     console.log("Filtered arrdes:", arrdesfilter);
     console.log("Filtered arrmoney:", arrmoneyfilter);
+
+    setdescription(arrdesfilter)
+    setmoney(arrmoneyfilter)
 
     setallindexarr(arrdesfilter.length + arrmoneyfilter.length)
 
@@ -179,7 +199,7 @@ const Page = ({ params }) => {
         0
       )
     );
-    console.log(arrmoneyfilter.reduce((acc, num) => acc + num, 0));
+
   };
 
   const deleteitem = (item) => {
@@ -190,6 +210,45 @@ const Page = ({ params }) => {
     item.parentElement.remove();
     setinvoices(prevCounter => prevCounter - 2)
   };
+
+
+
+
+  const addnewinvoice = (arr) =>{
+    settoday(moment().format("D/MM/YYYY"))
+    setoclock(moment().format('LT'))
+    let lastarrinvoice = arrinvoice[arrinvoice.length-1]
+    console.log(lastarrinvoice)
+
+    arrinvoice.forEach((invoice, i) => {
+    });
+
+    const repeatValue = (value, times) => {
+      return Array.from({ length: times }, () => value);
+    };
+
+    if(lastarrinvoice.date == today){
+      console.log("yes today")
+    }
+    else{
+      let time = repeatValue(oclock, description.length)
+      let user = repeatValue(localStorage.getItem("name"), description.length)
+
+      let newobj = {}
+      newobj = {
+        description:description,
+        money:money,
+        user:user,
+        dateofregistration:time,
+      }
+      console.log(newobj)
+
+    }
+
+  }
+
+
+  
 
   return (
     <>
@@ -639,6 +698,7 @@ const Page = ({ params }) => {
             </ul>
           </div>
         </div>
+
         <ul className="list-group" style={{ marginTop: 180 }}>
           <li
             className="list-group-item d-flex justify-content-between align-items-center list-group-item-light"
@@ -654,7 +714,7 @@ const Page = ({ params }) => {
               {InvMode === "danger" || InvMode === "success" ? (
                 <>
                   <Link
-                    
+                    onClick={addnewinvoice}
                     href="#"
                     className={`btn btn-primary w-100 ${allindexarr != invoices ? "disabled" : ""}`}
                     role="button"
@@ -680,8 +740,7 @@ const Page = ({ params }) => {
               )}
             </div>
 
-            {/* <button onclick="datature()">df</button> */}
-            {/* <button class=" rounded-circle" style="position: relative; bottom: 30px;background: linear-gradient(to right, #0f0094,rgb(0, 32, 102)); border: none; transform: scale(1.5);"><i class="fa-solid fa-plus" style="color: #FFD43B;"></i></button> */}
+  
 
             <div
               style={{ width: "45%", textAlign: "center" }}
@@ -731,6 +790,8 @@ const Page = ({ params }) => {
             </div>
           </li>
         </ul>
+
+        
         <button className="d-none" type="submit" id="myForm" />
       </form>
     </>
