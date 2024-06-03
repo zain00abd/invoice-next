@@ -347,34 +347,13 @@ const Page = ({ params }) => {
         <div className="container mt-3" style={{ direction: "rtl" }}>
           <div>
             <div>
-              الاسم: {name}
-              <input type="text" name="name" />
+              الاسم:{name}
             </div>
             <div>
-              العنوان: {adres}
-              <input type="text" name="addres" />
+              العنوان:{adres}
             </div>
             <div>
-              الهاتف: {phone}
-              <input type="text" name="phone" />
-            </div>
-            <div className="d-none">
-              invoicesprice:
-              <input
-                type="number"
-                id="inp_allinvoice"
-                defaultValue={56456}
-                name="invoicesprice"
-              />
-            </div>
-            <div className="d-none">
-              invoicespay:
-              <input
-                type="number"
-                id="inp_paymoney"
-                defaultValue={456886}
-                name="invoicespay"
-              />
+              الهاتف:{phone}
             </div>
           </div>
 
