@@ -10,6 +10,7 @@ const Page = () => {
   const [name, setname] = useState(null);
   const [addres, setaddres] = useState(null);
   const [phone, setphone] = useState(null);
+  const [arrinvoce, setarrinvoce] = useState([]);
   
 
   const setuser = async (e) =>{
@@ -26,6 +27,7 @@ const Page = () => {
         name,
         addres,
         phone,
+        arrinvoce,
       }),
     });
  

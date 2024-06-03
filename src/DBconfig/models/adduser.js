@@ -7,11 +7,12 @@ const mongoose = require("mongoose");
    name: String,
    addres: String,
    phone: String,
+   arrinvoce: Array,
 
  });
 
  // Create a model based on that schema
- const AdduserModal = models.Product || mongoose.model("Product", productSchema);
+ const AdduserModal = models.invoce || mongoose.model("invoce", productSchema);
 
  // export the model
  module.exports = AdduserModal;

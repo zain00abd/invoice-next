@@ -26,31 +26,36 @@ const Page = () => {
         notFound();
       }
       const result = await res.json();
-
+  
       const updatedResult = result.map(user => {
-        const getmony = JSON.parse(user.arrinvoce);
-        console.log("************user************");
         let totalarruser = 0;
-        let arrtoo = []
-        getmony.forEach((arrmoney) => {
-          const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
-          totalarruser += totalonearr;
-          arrtoo.push(totalarruser)
-          // console.log(totalarruser)
-        });
-        console.log(arrtoo)
-
+  
+        if (user.arrinvoce && user.arrinvoce.length > 0) {
+          const getmony = JSON.parse(user.arrinvoce);
+          console.log("************user************");
+          let arrtoo = [];
+          getmony.forEach((arrmoney) => {
+            const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
+            totalarruser += totalonearr;
+            arrtoo.push(totalarruser);
+          });
+          console.log(arrtoo);
+        }
+  
         totalarruser = Math.abs(totalarruser);
         user.total = totalarruser;
-        // console.log(user.total);
+        if (totalarruser === 0) {
+          user.total = 0;
+        }
         return user;
       });
-
+  
       setdata(updatedResult);
     };
-
+  
     getData();
   }, []);
+  
 
   return (
     <div className="container">

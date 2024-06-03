@@ -10,16 +10,10 @@ import Link from "next/link";
 
 console.log(moment().format("D/MM/YYYY"));
 
-
-    
-
-
-
 const Page = ({ params }) => {
   const [today, settoday] = useState("");
   const [oclock, setoclock] = useState("");
 
-  
   const [name, setname] = useState(null);
   const [adres, setadres] = useState(null);
   const [phone, setphone] = useState(null);
@@ -34,8 +28,7 @@ const Page = ({ params }) => {
   const inputRef = useRef(null);
   const [invoices, setinvoices] = useState(0);
   const [allindexarr, setallindexarr] = useState(0);
-  
-  
+  const [uninvoice, setuninvoice] = useState("");
 
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
@@ -50,7 +43,7 @@ const Page = ({ params }) => {
     } else {
       setInvMode("success");
       addItem(`success`, "تسديد مبلغ");
-      handelarr("inv_des_0", "تسديد مبلغ")
+      handelarr("inv_des_0", "تسديد مبلغ");
     }
     console.log("zain");
     buttonRef.current.click();
@@ -59,9 +52,7 @@ const Page = ({ params }) => {
     inpfucas();
   };
 
-  
   useEffect(() => {
-
     const getData = async () => {
       try {
         const response = await axios.get(
@@ -71,23 +62,34 @@ const Page = ({ params }) => {
         setname(result.name);
         setadres(result.addres);
         setphone(result.phone);
-        setarrinvoice(JSON.parse(result.arrinvoce));
+        console.log(result.phone);
 
+        console.log(result.arrinvoce.length);
+        if (result.arrinvoce.length !== 0) {
+          console.log("1");
+          setarrinvoice(JSON.parse(result.arrinvoce));
+          const getmony = JSON.parse(result.arrinvoce);
+          // console.log("************user************");
+          let totalarruser = 0;
+          let arrinvo = [];
+          let dateinvoice = [];
 
-        const getmony = JSON.parse(result.arrinvoce);
-        // console.log("************user************");
-        let totalarruser = 0;
-        let arrinvo = [];
-        let dateinvoice = [];
+          getmony.forEach((arrmoney) => {
+            dateinvoice.push(arrmoney.date);
+            const totalonearr = arrmoney.money.reduce(
+              (acc, num) => acc + num,
+              0
+            );
+            totalarruser += totalonearr;
+            arrinvo.push(totalarruser);
+          });
+          setCurrentTotal(arrinvo);
+          setdateinv(dateinvoice);
 
-        getmony.forEach((arrmoney) => {
-          dateinvoice.push(arrmoney.date);
-          const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
-          totalarruser += totalonearr;
-          arrinvo.push(totalarruser);
-        });
-        setCurrentTotal(arrinvo);
-        setdateinv(dateinvoice);
+          console.log("2");
+        } else {
+          setuninvoice("لم يتم تسجيل فواتير بعد");
+        }
       } catch (error) {
         if (error.response && error.response.status === 404) {
           notFound();
@@ -116,7 +118,7 @@ const Page = ({ params }) => {
     console.log("indexli");
     setItems([...items, newItem]);
     console.log(items);
-    setinvoices(prevCounter => prevCounter + 2)
+    setinvoices((prevCounter) => prevCounter + 2);
   };
 
   const inpfucas = () => {
@@ -147,33 +149,27 @@ const Page = ({ params }) => {
     }
 
     let namearr = id.split("_")[1];
-    let indexarr = parseInt(id.split("_")[2], 10); 
+    let indexarr = parseInt(id.split("_")[2], 10);
 
     if (namearr === "des") {
       arrdes[indexarr] = value;
     } else {
-      if(InvMode == "danger")
-      arrmoney[indexarr] = +-value;
-      else
-      arrmoney[indexarr] = +value;
-
+      if (InvMode == "danger") arrmoney[indexarr] = +-value;
+      else arrmoney[indexarr] = +value;
     }
 
     sessionStorage.setItem("arr1", JSON.stringify(arrmoney));
     sessionStorage.setItem("arr2", JSON.stringify(arrdes));
-
 
     filterarr();
   };
 
   const [description, setdescription] = useState([]);
   const [money, setmoney] = useState([]);
-  
 
   const filterarr = () => {
-
-    settoday(moment().format("D/MM/YYYY"))
-    setoclock(moment().format('LT'))
+    settoday(moment().format("D/MM/YYYY"));
+    setoclock(moment().format("LT"));
 
     let arrdesfilter = arrdes.filter(function (value) {
       return value !== null && value !== undefined && value !== "";
@@ -181,17 +177,21 @@ const Page = ({ params }) => {
 
     let arrmoneyfilter = arrmoney.filter(function (value) {
       return (
-        value !== null && value !== undefined && value !== "" && value !== 0 && !isNaN(value)
+        value !== null &&
+        value !== undefined &&
+        value !== "" &&
+        value !== 0 &&
+        !isNaN(value)
       );
     });
 
     console.log("Filtered arrdes:", arrdesfilter);
     console.log("Filtered arrmoney:", arrmoneyfilter);
 
-    setdescription(arrdesfilter)
-    setmoney(arrmoneyfilter)
+    setdescription(arrdesfilter);
+    setmoney(arrmoneyfilter);
 
-    setallindexarr(arrdesfilter.length + arrmoneyfilter.length)
+    setallindexarr(arrdesfilter.length + arrmoneyfilter.length);
 
     setplusinvoice(
       arrmoneyfilter.reduce(
@@ -199,7 +199,6 @@ const Page = ({ params }) => {
         0
       )
     );
-
   };
 
   const deleteitem = (item) => {
@@ -208,47 +207,54 @@ const Page = ({ params }) => {
 
     handelarr(`inv_mon_${indexdeletitem}`, null);
     item.parentElement.remove();
-    setinvoices(prevCounter => prevCounter - 2)
+    setinvoices((prevCounter) => prevCounter - 2);
   };
 
-
-
-
-  const addnewinvoice = (arr) =>{
-    settoday(moment().format("D/MM/YYYY"))
-    setoclock(moment().format('LT'))
+  const addnewinvoice = (arr) => {
+    settoday(moment().format("D/MM/YYYY"));
+    setoclock(moment().format("LT"));
     let lastarrinvoice = arrinvoice[arrinvoice.length-1]
-    console.log(lastarrinvoice)
 
-    arrinvoice.forEach((invoice, i) => {
-    });
+    if (arrinvoice != "") {
 
+      if (lastarrinvoice.date == today) {
+        apdateoldinvoice()
+      } 
+      else {
+        creatnewinvoice()
+      }
+
+
+
+
+
+    } else {
+      console.log("no arr");
+    }
+  };
+
+  const creatnewinvoice = () => {
+    
     const repeatValue = (value, times) => {
       return Array.from({ length: times }, () => value);
     };
+    let time = repeatValue(oclock, description.length);
+    let user = repeatValue(localStorage.getItem("name"), description.length);
 
-    if(lastarrinvoice.date == today){
-      console.log("yes today")
-    }
-    else{
-      let time = repeatValue(oclock, description.length)
-      let user = repeatValue(localStorage.getItem("name"), description.length)
+    let newobj = {};
+    newobj = {
+      date: today,
+      description: description,
+      money: money,
+      user: user,
+      dateofregistration: time,
+    };
+    arrinvoice.push(newobj);
+    console.log(newobj);
+    console.log(arrinvoice);
+  };
 
-      let newobj = {}
-      newobj = {
-        description:description,
-        money:money,
-        user:user,
-        dateofregistration:time,
-      }
-      console.log(newobj)
-
-    }
-
-  }
-
-
-  
+  const apdateoldinvoice = () => {};
 
   return (
     <>
@@ -376,11 +382,10 @@ const Page = ({ params }) => {
 
           {arrinvoice.map((arr, index) => {
             return (
-
               <ul
-              className="list-group mb-4 mt-4"
-              style={{ padding: 0 }}
-              key={index}
+                className="list-group mb-4 mt-4"
+                style={{ padding: 0 }}
+                key={index}
               >
                 <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-primary border border-1 border-primary">
                   <div style={{ width: "50%", textAlign: "center" }}>الوصف</div>
@@ -552,17 +557,19 @@ const Page = ({ params }) => {
             );
           })}
 
-          {/* <h3
-            style={{
-              margin: "auto",
-              textAlign: "center",
-              color: "rgba(255, 0, 0, 0.623)",
-              padding: 80,
-            }}
-          >
-            {" "}
-            لم يتم تسجيل فواتير بعد{" "}
-          </h3> */}
+          {arrinvoice == "" && (
+            <h3
+              style={{
+                margin: "auto",
+                textAlign: "center",
+                color: "rgba(255, 0, 0, 0.623)",
+                padding: 80,
+              }}
+            >
+              {" "}
+              {uninvoice}{" "}
+            </h3>
+          )}
           {/* style add invoice */}
 
           <div
@@ -716,7 +723,9 @@ const Page = ({ params }) => {
                   <Link
                     onClick={addnewinvoice}
                     href="#"
-                    className={`btn btn-primary w-100 ${allindexarr != invoices ? "disabled" : ""}`}
+                    className={`btn btn-primary w-100 ${
+                      allindexarr != invoices ? "disabled" : ""
+                    }`}
                     role="button"
                     id="btn_save"
                   >
@@ -739,8 +748,6 @@ const Page = ({ params }) => {
                 </>
               )}
             </div>
-
-  
 
             <div
               style={{ width: "45%", textAlign: "center" }}
@@ -791,7 +798,6 @@ const Page = ({ params }) => {
           </li>
         </ul>
 
-        
         <button className="d-none" type="submit" id="myForm" />
       </form>
     </>
