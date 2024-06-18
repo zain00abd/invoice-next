@@ -7,6 +7,7 @@ import { notFound, useSearchParams } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
 import Link from "next/link";
+const port = 3000 || process.env.PORT
 
 console.log(moment().format("D/MM/YYYY"));
 
@@ -29,6 +30,10 @@ const Page = ({ params }) => {
   const [invoices, setinvoices] = useState(0);
   const [allindexarr, setallindexarr] = useState(0);
   const [uninvoice, setuninvoice] = useState("");
+  const [iduser, setiduser] = useState(null);
+  const [lastinvoice, setlastinvoice] = useState(null);
+  
+  
 
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
@@ -62,12 +67,15 @@ const Page = ({ params }) => {
         setname(result.name);
         setadres(result.addres);
         setphone(result.phone);
+        setiduser(result._id)
         console.log(result.phone);
 
         console.log(result.arrinvoce.length);
         if (result.arrinvoce.length !== 0) {
-          console.log("1");
+          
+
           setarrinvoice(JSON.parse(result.arrinvoce));
+          setlastinvoice(JSON.parse(result.arrinvoce)[JSON.parse(result.arrinvoce).length-1])
           const getmony = JSON.parse(result.arrinvoce);
           // console.log("************user************");
           let totalarruser = 0;
@@ -84,7 +92,9 @@ const Page = ({ params }) => {
             arrinvo.push(totalarruser);
           });
           setCurrentTotal(arrinvo);
+          console.log(currentTotal)
           setdateinv(dateinvoice);
+          console.log(dateinv)
 
           console.log("2");
         } else {
@@ -136,8 +146,7 @@ const Page = ({ params }) => {
 
   let arrdes = [];
   let arrmoney = [];
-  let arrdesfilter = [];
-  let arrmoneyfiletr = [];
+
 
   const handelarr = (id, value) => {
     if (
@@ -214,11 +223,12 @@ const Page = ({ params }) => {
     settoday(moment().format("D/MM/YYYY"));
     setoclock(moment().format("LT"));
     let lastarrinvoice = arrinvoice[arrinvoice.length-1]
+    setlastinvoice(lastarrinvoice)
 
     if (arrinvoice != "") {
 
       if (lastarrinvoice.date == today) {
-        apdateoldinvoice()
+        updateoldinvoice()
       } 
       else {
         creatnewinvoice()
@@ -230,6 +240,7 @@ const Page = ({ params }) => {
 
     } else {
       console.log("no arr");
+      creatnewinvoice()
     }
   };
 
@@ -251,10 +262,43 @@ const Page = ({ params }) => {
     };
     arrinvoice.push(newobj);
     console.log(newobj);
-    console.log(arrinvoice);
+    console.log(JSON.stringify(arrinvoice));
+    SubmitUpdate()
   };
 
-  const apdateoldinvoice = () => {};
+  const updateoldinvoice = () => {
+
+    console.log(lastinvoice.money)
+
+    SubmitUpdate()
+
+  };
+
+  const SubmitUpdate = async (e) =>{
+    
+
+
+    const response = await fetch(`http://localhost:${port}/api/updateinvoice`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        adres,
+        phone,
+        arrinvoice:JSON.stringify(arrinvoice),
+        iduser,
+      }),
+    });
+ 
+    const dataFromBackend = await response.json();
+    console.log(dataFromBackend);
+
+    if(response.ok){
+      console.log("yes")
+    }
+  }
 
   return (
     <>
@@ -414,7 +458,7 @@ const Page = ({ params }) => {
                         defaultValue={
                           currentTotal[index - 1] > 0
                             ? "+" + currentTotal[index - 1]
-                            : currentTotal[index - 1]
+                            : Math.abs(currentTotal[index - 1])
                         }
                       />
 
@@ -699,7 +743,7 @@ const Page = ({ params }) => {
             >
               {InvMode === "danger" || InvMode === "success" ? (
                 <>
-                  <Link
+                  <button
                     onClick={addnewinvoice}
                     href="#"
                     className={`btn btn-primary w-100 ${
@@ -709,7 +753,7 @@ const Page = ({ params }) => {
                     id="btn_save"
                   >
                     حفظ التغييرات
-                  </Link>
+                  </button>
                 </>
               ) : (
                 <>
@@ -732,19 +776,18 @@ const Page = ({ params }) => {
               style={{ width: "45%", textAlign: "center" }}
               id="gro_btn_invoice"
             >
-              {InvMode === "danger" || InvMode === "success" ? (
-                <>
+              {InvMode === "danger" || InvMode === "success" ? 
+                
                   <Link
                     className="btn btn-danger w-100"
-                    href="/view"
-                    role="button"
+                    href={`/`}
                     id="btn_close"
                   >
                     الغاء
                   </Link>
-                </>
-              ) : (
-                <>
+                
+               : 
+                
                   <div
                     className="dropup-center dropup"
                     id="btn_section"
@@ -765,14 +808,14 @@ const Page = ({ params }) => {
                         className="fa-solid fa-sack-dollar fa-lg"
                         style={{ color: "#ffffff" }}
                       />
-                      {total}
+                      {Math.abs(currentTotal[currentTotal.length-1])}
                     </button>
                     <small className="d-none" id="ttt-1">
                       4546
                     </small>
                   </div>
-                </>
-              )}
+                
+              }
             </div>
           </li>
         </ul>
