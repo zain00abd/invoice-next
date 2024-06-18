@@ -7,11 +7,12 @@ import { notFound, useSearchParams } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
 import Link from "next/link";
-const port = 3000 || process.env.PORT
+const port = location.origin
 
 console.log(moment().format("D/MM/YYYY"));
 
 const Page = ({ params }) => {
+  
   const [today, settoday] = useState("");
   const [oclock, setoclock] = useState("");
 
@@ -278,7 +279,7 @@ const Page = ({ params }) => {
     
 
 
-    const response = await fetch(`https://invoice-next-three.vercel.app/api/updateinvoice`, {
+    const response = await fetch(`${port}/api/updateinvoice`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
