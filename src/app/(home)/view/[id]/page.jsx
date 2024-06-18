@@ -278,7 +278,7 @@ const Page = ({ params }) => {
     
 
 
-    const response = await fetch(`http://localhost:${port}/api/updateinvoice`, {
+    const response = await fetch(`https://invoice-next-three.vercel.app/api/updateinvoice`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
