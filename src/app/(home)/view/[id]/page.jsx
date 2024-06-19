@@ -3,16 +3,16 @@
 
 import { useEffect, useState, useRef } from "react";
 import "./style.css";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
 import Link from "next/link";
-const port = location.origin
+
 
 console.log(moment().format("D/MM/YYYY"));
 
 const Page = ({ params }) => {
-  
+
   const [today, settoday] = useState("");
   const [oclock, setoclock] = useState("");
 
@@ -35,7 +35,9 @@ const Page = ({ params }) => {
   const [lastinvoice, setlastinvoice] = useState(null);
   
   
+  const router = useRouter();
 
+  
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
@@ -220,19 +222,27 @@ const Page = ({ params }) => {
     setinvoices((prevCounter) => prevCounter - 2);
   };
 
-  const addnewinvoice = (arr) => {
+  const addnewinvoice = (e) => {
+    e.preventDefault()
+
     settoday(moment().format("D/MM/YYYY"));
     setoclock(moment().format("LT"));
+
     let lastarrinvoice = arrinvoice[arrinvoice.length-1]
-    setlastinvoice(lastarrinvoice)
+    let invoice = creatnewinvoice()
+
+
 
     if (arrinvoice != "") {
 
       if (lastarrinvoice.date == today) {
-        updateoldinvoice()
+        updateoldinvoice(invoice)
+        console.log("old invoice")
       } 
       else {
-        creatnewinvoice()
+        console.log("new invoice")
+        
+        addednewinvoice(invoice)
       }
 
 
@@ -241,7 +251,7 @@ const Page = ({ params }) => {
 
     } else {
       console.log("no arr");
-      creatnewinvoice()
+      addednewinvoice(invoice)
     }
   };
 
@@ -250,6 +260,7 @@ const Page = ({ params }) => {
     const repeatValue = (value, times) => {
       return Array.from({ length: times }, () => value);
     };
+
     let time = repeatValue(oclock, description.length);
     let user = repeatValue(localStorage.getItem("name"), description.length);
 
@@ -261,25 +272,42 @@ const Page = ({ params }) => {
       user: user,
       dateofregistration: time,
     };
-    arrinvoice.push(newobj);
-    console.log(newobj);
-    console.log(JSON.stringify(arrinvoice));
-    SubmitUpdate()
+    return newobj;
+    // arrinvoice.push(newobj);
+    // addednewinvoice(newobj)
+    // console.log(newobj);
+    // console.log(JSON.stringify(arrinvoice));
+    // SubmitUpdate()
   };
 
-  const updateoldinvoice = () => {
-
-    console.log(lastinvoice.money)
-
+  const addednewinvoice = (invoice) =>{
+    arrinvoice.push(invoice);
     SubmitUpdate()
 
-  };
+  }
 
-  const SubmitUpdate = async (e) =>{
+  const updateoldinvoice = (invoice) => {
     
 
+    lastinvoice.money.push(...invoice.money)
+    lastinvoice.user.push(...invoice.user)
+    lastinvoice.description.push(...invoice.description)
+    lastinvoice.dateofregistration.push(...invoice.dateofregistration)
 
-    const response = await fetch(`${port}/api/updateinvoice`, {
+    arrinvoice[arrinvoice.length-1] = lastinvoice
+    console.log(arrinvoice[arrinvoice.length-1])
+
+    SubmitUpdate()
+
+  };
+  console.log("baseURL")
+
+  const SubmitUpdate = async (e) =>{
+    const baseURL = window.location.origin;
+    console.log(baseURL)
+    
+
+    const response = await fetch(`${baseURL}/api/updateinvoice`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -298,6 +326,8 @@ const Page = ({ params }) => {
 
     if(response.ok){
       console.log("yes")
+      // router.replace('/')
+      location.reload()
     }
   }
 
@@ -567,13 +597,13 @@ const Page = ({ params }) => {
                     |
                   </div>
                   <div style={{ width: "50%", textAlign: "center" }}>
-                    الاجمالي:
+                    الاجمالي: {" "}
                     <small
                       className="text-danger"
                       id=""
                       style={{ direction: "ltr" }}
                     >
-                      {currentTotal[index]}
+                      {Math.abs (currentTotal[index])}
                     </small>
                   </div>
                 </li>
