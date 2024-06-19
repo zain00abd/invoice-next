@@ -33,6 +33,10 @@ const Page = ({ params }) => {
   const [uninvoice, setuninvoice] = useState("");
   const [iduser, setiduser] = useState(null);
   const [lastinvoice, setlastinvoice] = useState(null);
+
+
+  const [isonsubmit, setisonsubmit] = useState(false);
+  
   
   
   const router = useRouter();
@@ -303,6 +307,7 @@ const Page = ({ params }) => {
   console.log("baseURL")
 
   const SubmitUpdate = async (e) =>{
+    setisonsubmit(true)
     const baseURL = window.location.origin;
     console.log(baseURL)
     
@@ -778,7 +783,7 @@ const Page = ({ params }) => {
                     onClick={addnewinvoice}
                     href="#"
                     className={`btn btn-primary w-100 ${
-                      allindexarr != invoices ? "disabled" : ""
+                      allindexarr != invoices || isonsubmit ? "disabled" : ""
                     }`}
                     role="button"
                     id="btn_save"
