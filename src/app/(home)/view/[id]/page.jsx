@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import "./style.css";
-import { notFound, useSearchParams, useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
 import Musseg from "@/../../src/components/Musseg";
@@ -16,7 +16,6 @@ console.log(moment().format("D/MM/YYYY"));
 const Page = ({ params }) => {
   const [today, settoday] = useState("");
   const [oclock, setoclock] = useState("");
-
   const [indexli, setindexli] = useState(0);
   const [items, setItems] = useState([]);
   const [name, setname] = useState(null);
@@ -752,7 +751,7 @@ const Page = ({ params }) => {
                 <div style={{ width: "50%", textAlign: "center" }}>
                   الاجمالي:
                   <small className="text-danger" id="total_inv">
-                    {plusinvoice}
+                    {Math.abs(plusinvoice)}
                   </small>
                 </div>
               </li>
