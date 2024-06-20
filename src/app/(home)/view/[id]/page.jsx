@@ -7,12 +7,12 @@ import { notFound, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
 import Link from "next/link";
-
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 console.log(moment().format("D/MM/YYYY"));
 
 const Page = ({ params }) => {
-
   const [today, settoday] = useState("");
   const [oclock, setoclock] = useState("");
 
@@ -34,17 +34,16 @@ const Page = ({ params }) => {
   const [iduser, setiduser] = useState(null);
   const [lastinvoice, setlastinvoice] = useState(null);
 
-
   const [isonsubmit, setisonsubmit] = useState(false);
-  
-  
-  
+
   const router = useRouter();
 
-  
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    
   }, []);
+
+  
 
   const [InvMode, setInvMode] = useState("");
 
@@ -74,15 +73,17 @@ const Page = ({ params }) => {
         setname(result.name);
         setadres(result.addres);
         setphone(result.phone);
-        setiduser(result._id)
+        setiduser(result._id);
         console.log(result.phone);
 
         console.log(result.arrinvoce.length);
         if (result.arrinvoce.length !== 0) {
-          
-
           setarrinvoice(JSON.parse(result.arrinvoce));
-          setlastinvoice(JSON.parse(result.arrinvoce)[JSON.parse(result.arrinvoce).length-1])
+          setlastinvoice(
+            JSON.parse(result.arrinvoce)[
+              JSON.parse(result.arrinvoce).length - 1
+            ]
+          );
           const getmony = JSON.parse(result.arrinvoce);
           // console.log("************user************");
           let totalarruser = 0;
@@ -99,11 +100,11 @@ const Page = ({ params }) => {
             arrinvo.push(totalarruser);
           });
           setCurrentTotal(arrinvo);
-          console.log(currentTotal)
           setdateinv(dateinvoice);
-          console.log(dateinv)
-
-          console.log("2");
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: "smooth",
+          });
         } else {
           setuninvoice("لم يتم تسجيل فواتير بعد");
         }
@@ -146,13 +147,14 @@ const Page = ({ params }) => {
     }, 0);
   };
 
+  let arrdes = [];
+  let arrmoney = [];
   useEffect(() => {
     sessionStorage.removeItem("arr1");
     sessionStorage.removeItem("arr2");
-  }, []);
-
-  let arrdes = [];
-  let arrmoney = [];
+    arrdes = [];
+    arrmoney = [];
+  }, [isonsubmit]);
 
 
   const handelarr = (id, value) => {
@@ -227,40 +229,30 @@ const Page = ({ params }) => {
   };
 
   const addnewinvoice = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     settoday(moment().format("D/MM/YYYY"));
     setoclock(moment().format("LT"));
 
-    let lastarrinvoice = arrinvoice[arrinvoice.length-1]
-    let invoice = creatnewinvoice()
-
-
+    let lastarrinvoice = arrinvoice[arrinvoice.length - 1];
+    let invoice = creatnewinvoice();
 
     if (arrinvoice != "") {
-
       if (lastarrinvoice.date == today) {
-        updateoldinvoice(invoice)
-        console.log("old invoice")
-      } 
-      else {
-        console.log("new invoice")
-        
-        addednewinvoice(invoice)
+        updateoldinvoice(invoice);
+        console.log("old invoice");
+      } else {
+        console.log("new invoice");
+
+        addednewinvoice(invoice);
       }
-
-
-
-
-
     } else {
       console.log("no arr");
-      addednewinvoice(invoice)
+      addednewinvoice(invoice);
     }
   };
 
   const creatnewinvoice = () => {
-    
     const repeatValue = (value, times) => {
       return Array.from({ length: times }, () => value);
     };
@@ -284,33 +276,28 @@ const Page = ({ params }) => {
     // SubmitUpdate()
   };
 
-  const addednewinvoice = (invoice) =>{
+  const addednewinvoice = (invoice) => {
     arrinvoice.push(invoice);
-    SubmitUpdate()
-
-  }
+    SubmitUpdate();
+  };
 
   const updateoldinvoice = (invoice) => {
-    
+    lastinvoice.money.push(...invoice.money);
+    lastinvoice.user.push(...invoice.user);
+    lastinvoice.description.push(...invoice.description);
+    lastinvoice.dateofregistration.push(...invoice.dateofregistration);
 
-    lastinvoice.money.push(...invoice.money)
-    lastinvoice.user.push(...invoice.user)
-    lastinvoice.description.push(...invoice.description)
-    lastinvoice.dateofregistration.push(...invoice.dateofregistration)
+    arrinvoice[arrinvoice.length - 1] = lastinvoice;
+    console.log(arrinvoice[arrinvoice.length - 1]);
 
-    arrinvoice[arrinvoice.length-1] = lastinvoice
-    console.log(arrinvoice[arrinvoice.length-1])
-
-    SubmitUpdate()
-
+    SubmitUpdate();
   };
-  console.log("baseURL")
+  console.log("baseURL");
 
-  const SubmitUpdate = async (e) =>{
-    setisonsubmit(true)
+  const SubmitUpdate = async (e) => {
+    setisonsubmit(true);
     const baseURL = window.location.origin;
-    console.log(baseURL)
-    
+    console.log(baseURL);
 
     const response = await fetch(`${baseURL}/api/updateinvoice`, {
       method: "PUT",
@@ -321,23 +308,53 @@ const Page = ({ params }) => {
         name,
         adres,
         phone,
-        arrinvoice:JSON.stringify(arrinvoice),
+        arrinvoice: JSON.stringify(arrinvoice),
         iduser,
       }),
     });
- 
+
     const dataFromBackend = await response.json();
     console.log(dataFromBackend);
 
-    if(response.ok){
-      console.log("yes")
-      // router.replace('/')
-      location.reload()
+    
+    
+    if (response.ok) {
+      console.log("yes");
+      toast.success(' تم اضافة الفاتورة بنجاح ')
+      setshowinvoice("d-none");
+      setisonsubmit(false)
+      setInvMode("")
+      setItems([])
+      setindexli(0)
+      setinvoices(0)
+      setplusinvoice(0)
     }
-  }
+    
+  };
 
   return (
     <>
+<ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="colored"
+
+/>
+
+
+
+
+
+
+
+
       <div
         className="modal fade"
         id="staticBackdrop"
@@ -426,15 +443,9 @@ const Page = ({ params }) => {
         />
         <div className="container mt-3" style={{ direction: "rtl" }}>
           <div>
-            <div>
-              الاسم:{name}
-            </div>
-            <div>
-              العنوان:{adres}
-            </div>
-            <div>
-              الهاتف:{phone}
-            </div>
+            <div>الاسم:{name}</div>
+            <div>العنوان:{adres}</div>
+            <div>الهاتف:{phone}</div>
           </div>
 
           {/* style requst invoice */}
@@ -602,13 +613,13 @@ const Page = ({ params }) => {
                     |
                   </div>
                   <div style={{ width: "50%", textAlign: "center" }}>
-                    الاجمالي: {" "}
+                    الاجمالي:{" "}
                     <small
                       className="text-danger"
                       id=""
                       style={{ direction: "ltr" }}
                     >
-                      {Math.abs (currentTotal[index])}
+                      {Math.abs(currentTotal[index])}
                     </small>
                   </div>
                 </li>
@@ -788,7 +799,19 @@ const Page = ({ params }) => {
                     role="button"
                     id="btn_save"
                   >
-                    حفظ التغييرات
+                    {!isonsubmit ? (
+                      "حفظ الفاتورة"
+                    ) : (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          aria-hidden="true"
+                        ></span>
+                        
+                          ... برجاء الانتظار 
+                        
+                      </>
+                    )}
                   </button>
                 </>
               ) : (
@@ -812,46 +835,39 @@ const Page = ({ params }) => {
               style={{ width: "45%", textAlign: "center" }}
               id="gro_btn_invoice"
             >
-              {InvMode === "danger" || InvMode === "success" ? 
-                
-                  <Link
-                    className="btn btn-danger w-100"
-                    href={`/`}
-                    id="btn_close"
+              {InvMode === "danger" || InvMode === "success" ? (
+                <Link
+                  className="btn btn-danger w-100"
+                  href={`/`}
+                  id="btn_close"
+                >
+                  الغاء
+                </Link>
+              ) : (
+                <div
+                  className="dropup-center dropup"
+                  id="btn_section"
+                  style={{ width: "100%" }}
+                >
+                  <button
+                    style={{
+                      width: "100%",
+                      fontWeight: 600,
+                      letterSpacing: "1.1px",
+                    }}
+                    className="btn btn-danger"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop"
                   >
-                    الغاء
-                  </Link>
-                
-               : 
-                
-                  <div
-                    className="dropup-center dropup"
-                    id="btn_section"
-                    style={{ width: "100%" }}
-                  >
-                    <button
-                      style={{
-                        width: "100%",
-                        fontWeight: 600,
-                        letterSpacing: "1.1px",
-                      }}
-                      className="btn btn-danger"
-                      type="button"
-                      data-bs-toggle="modal"
-                      data-bs-target="#staticBackdrop"
-                    >
-                      <i
-                        className="fa-solid fa-sack-dollar fa-lg"
-                        style={{ color: "#ffffff" }}
-                      />
-                      {Math.abs(currentTotal[currentTotal.length-1])}
-                    </button>
-                    <small className="d-none" id="ttt-1">
-                      4546
-                    </small>
-                  </div>
-                
-              }
+                    <i
+                      className="fa-solid fa-sack-dollar fa-lg"
+                      style={{ color: "#ffffff" }}
+                    />
+                    {Math.abs(currentTotal[currentTotal.length - 1])}
+                  </button>
+                </div>
+              )}
             </div>
           </li>
         </ul>
