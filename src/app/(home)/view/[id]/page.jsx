@@ -6,10 +6,10 @@ import "./style.css";
 import { notFound, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
-import Musseg from "@/../../src/components/Musseg"
+import Musseg from "@/../../src/components/Musseg";
 import Link from "next/link";
-import 'react-toastify/dist/ReactToastify.css';
-import { toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 console.log(moment().format("D/MM/YYYY"));
 
@@ -22,11 +22,9 @@ const Page = ({ params }) => {
   const [name, setname] = useState(null);
   const [adres, setadres] = useState(null);
   const [phone, setphone] = useState(null);
-  const [total, settotal] = useState(null);
   const [arrinvoice, setarrinvoice] = useState([]);
   const [dateinv, setdateinv] = useState([]);
   const [currentTotal, setCurrentTotal] = useState(0);
-  const pathname = useSearchParams();
   const buttonRef = useRef(null);
   const [plusinvoice, setplusinvoice] = useState(0);
   const [showinvoice, setshowinvoice] = useState("d-none");
@@ -42,13 +40,14 @@ const Page = ({ params }) => {
 
   useEffect(() => {
     const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
     // @ts-ignore
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-    
-  }, [dateinv]);
+    const popoverList = [...popoverTriggerList].map(
+      (popoverTriggerEl) => new bootstrap.Popover(popoverTriggerEl)
+    );
 
-  
+
+  }, [dateinv]);
 
   const [InvMode, setInvMode] = useState("");
 
@@ -90,15 +89,8 @@ const Page = ({ params }) => {
             ]
           );
           const getmony = JSON.parse(result.arrinvoce);
-          // console.log("************user************");
-          arrAllinvoice(getmony)
+          arrAllinvoice(getmony);
 
-
-
-          window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: "smooth",
-          });
         } else {
           setuninvoice("لم يتم تسجيل فواتير بعد");
         }
@@ -109,31 +101,30 @@ const Page = ({ params }) => {
           console.error("Unexpected error occurred:", error);
         }
       }
+
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
     };
-    settotal(pathname.toString().replace("=", ""));
 
     getData();
-  }, [params.id, pathname]);
+  }, [params.id]);
 
-  const arrAllinvoice = (arr) =>{
+  const arrAllinvoice = (arr) => {
     let totalarruser = 0;
     let arrinvo = [];
     let dateinvoice = [];
 
     arr.forEach((arrmoney) => {
       dateinvoice.push(arrmoney.date);
-      const totalonearr = arrmoney.money.reduce(
-        (acc, num) => acc + num,
-        0
-      );
+      const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
       totalarruser += totalonearr;
       arrinvo.push(totalarruser);
     });
     setCurrentTotal(arrinvo);
     setdateinv(dateinvoice);
-  }
-
-
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
@@ -166,7 +157,6 @@ const Page = ({ params }) => {
     arrdes = [];
     arrmoney = [];
   }, [isonsubmit]);
-
 
   const handelarr = (id, value) => {
     if (
@@ -327,27 +317,23 @@ const Page = ({ params }) => {
     const dataFromBackend = await response.json();
     console.log(dataFromBackend);
 
-    
-    
     if (response.ok) {
       console.log("yes");
-      toast.success(' تم اضافة الفاتورة بنجاح ')
+      toast.success(" تم اضافة الفاتورة بنجاح ");
       setshowinvoice("d-none");
-      setisonsubmit(false)
-      setInvMode("")
-      setItems([])
-      setindexli(0)
-      setinvoices(0)
-      setplusinvoice(0)
-      arrAllinvoice(arrinvoice)
+      setisonsubmit(false);
+      setInvMode("");
+      setItems([]);
+      setindexli(0);
+      setinvoices(0);
+      setplusinvoice(0);
+      arrAllinvoice(arrinvoice);
     }
-    
   };
 
   return (
     <>
-    <Musseg />
-
+      <Musseg />
 
       <div
         className="modal fade"
@@ -572,7 +558,7 @@ const Page = ({ params }) => {
                             fontWeight: 600,
                             border: "none",
                             color: "#000000",
-                            background: "none"
+                            background: "none",
                           }}
                           type="button"
                           className="btn btn-secondary"
@@ -580,7 +566,6 @@ const Page = ({ params }) => {
                           data-bs-toggle="popover"
                           data-bs-placement="right"
                           data-bs-content={arr.dateofregistration[Larr]}
-                          
                         >
                           {arr.user[Larr]}
                         </button>
@@ -681,7 +666,6 @@ const Page = ({ params }) => {
                         type="text"
                         style={{ width: "48%", textAlign: "center" }}
                         id={`inv_des_${item.id}`}
-                        
                         defaultValue={item.valueinp}
                         ref={inputRef}
                       />
@@ -702,7 +686,6 @@ const Page = ({ params }) => {
                           direction: "ltr",
                         }}
                         id={`inv_mon_${item.id}`}
-                        
                         defaultValue={item.value2}
                       />
 
@@ -808,9 +791,7 @@ const Page = ({ params }) => {
                           className="spinner-border spinner-border-sm"
                           aria-hidden="true"
                         ></span>
-                        
-                          ... برجاء الانتظار 
-                        
+                        ... برجاء الانتظار
                       </>
                     )}
                   </button>
