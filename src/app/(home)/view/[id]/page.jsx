@@ -41,9 +41,12 @@ const Page = ({ params }) => {
   const router = useRouter();
 
   useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    // @ts-ignore
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
     
-  }, []);
+  }, [dateinv]);
 
   
 
@@ -88,21 +91,9 @@ const Page = ({ params }) => {
           );
           const getmony = JSON.parse(result.arrinvoce);
           // console.log("************user************");
-          let totalarruser = 0;
-          let arrinvo = [];
-          let dateinvoice = [];
+          arrAllinvoice(getmony)
 
-          getmony.forEach((arrmoney) => {
-            dateinvoice.push(arrmoney.date);
-            const totalonearr = arrmoney.money.reduce(
-              (acc, num) => acc + num,
-              0
-            );
-            totalarruser += totalonearr;
-            arrinvo.push(totalarruser);
-          });
-          setCurrentTotal(arrinvo);
-          setdateinv(dateinvoice);
+
 
           window.scrollTo({
             top: document.body.scrollHeight,
@@ -123,6 +114,24 @@ const Page = ({ params }) => {
 
     getData();
   }, [params.id, pathname]);
+
+  const arrAllinvoice = (arr) =>{
+    let totalarruser = 0;
+    let arrinvo = [];
+    let dateinvoice = [];
+
+    arr.forEach((arrmoney) => {
+      dateinvoice.push(arrmoney.date);
+      const totalonearr = arrmoney.money.reduce(
+        (acc, num) => acc + num,
+        0
+      );
+      totalarruser += totalonearr;
+      arrinvo.push(totalarruser);
+    });
+    setCurrentTotal(arrinvo);
+    setdateinv(dateinvoice);
+  }
 
 
 
@@ -330,6 +339,7 @@ const Page = ({ params }) => {
       setindexli(0)
       setinvoices(0)
       setplusinvoice(0)
+      arrAllinvoice(arrinvoice)
     }
     
   };
@@ -422,6 +432,7 @@ const Page = ({ params }) => {
           className="d-none"
           name="arrinvoce"
           type="text"
+          readOnly
           defaultValue="<%= arr.arrinvoce %>"
           id="inp_ReqAdd_invoice"
         />
@@ -464,6 +475,7 @@ const Page = ({ params }) => {
                         type="text"
                         style={{ width: "50%", textAlign: "center" }}
                         id="inv_Ms"
+                        readOnly
                         defaultValue={"فاتورة سابقة"}
                       />
 
@@ -486,6 +498,7 @@ const Page = ({ params }) => {
                           direction: "ltr",
                         }}
                         id="inv_Ms"
+                        readOnly
                         defaultValue={
                           currentTotal[index - 1] > 0
                             ? "+" + currentTotal[index - 1]
@@ -505,9 +518,7 @@ const Page = ({ params }) => {
                         type="button"
                         className="btn"
                         data-bs-container="body"
-                        data-bs-toggle="popover"
                         data-bs-placement="right"
-                        data-bs-content="thth"
                       >
                         {dateinv[index - 1]}
                       </button>
@@ -532,6 +543,7 @@ const Page = ({ params }) => {
                           type="text"
                           style={{ width: "50%", textAlign: "center" }}
                           id="inv_Ms"
+                          readOnly
                           defaultValue={arr.description[Larr]}
                         />
 
@@ -548,6 +560,7 @@ const Page = ({ params }) => {
                             direction: "ltr",
                           }}
                           id="inv_Ms"
+                          readOnly
                           defaultValue={Math.abs(arr.money[Larr])}
                         />
 
@@ -559,13 +572,15 @@ const Page = ({ params }) => {
                             fontWeight: 600,
                             border: "none",
                             color: "#000000",
+                            background: "none"
                           }}
                           type="button"
-                          className="btn"
+                          className="btn btn-secondary"
                           data-bs-container="body"
                           data-bs-toggle="popover"
                           data-bs-placement="right"
-                          data-bs-content="thth"
+                          data-bs-content={arr.dateofregistration[Larr]}
+                          
                         >
                           {arr.user[Larr]}
                         </button>
@@ -666,6 +681,7 @@ const Page = ({ params }) => {
                         type="text"
                         style={{ width: "48%", textAlign: "center" }}
                         id={`inv_des_${item.id}`}
+                        
                         defaultValue={item.valueinp}
                         ref={inputRef}
                       />
@@ -686,6 +702,7 @@ const Page = ({ params }) => {
                           direction: "ltr",
                         }}
                         id={`inv_mon_${item.id}`}
+                        
                         defaultValue={item.value2}
                       />
 
