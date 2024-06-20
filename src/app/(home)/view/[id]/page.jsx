@@ -6,9 +6,10 @@ import "./style.css";
 import { notFound, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import moment from "moment";
+import Musseg from "@/../../src/components/Musseg"
 import Link from "next/link";
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 console.log(moment().format("D/MM/YYYY"));
 
@@ -16,6 +17,8 @@ const Page = ({ params }) => {
   const [today, settoday] = useState("");
   const [oclock, setoclock] = useState("");
 
+  const [indexli, setindexli] = useState(0);
+  const [items, setItems] = useState([]);
   const [name, setname] = useState(null);
   const [adres, setadres] = useState(null);
   const [phone, setphone] = useState(null);
@@ -33,7 +36,6 @@ const Page = ({ params }) => {
   const [uninvoice, setuninvoice] = useState("");
   const [iduser, setiduser] = useState(null);
   const [lastinvoice, setlastinvoice] = useState(null);
-
   const [isonsubmit, setisonsubmit] = useState(false);
 
   const router = useRouter();
@@ -101,6 +103,7 @@ const Page = ({ params }) => {
           });
           setCurrentTotal(arrinvo);
           setdateinv(dateinvoice);
+
           window.scrollTo({
             top: document.body.scrollHeight,
             behavior: "smooth",
@@ -121,8 +124,7 @@ const Page = ({ params }) => {
     getData();
   }, [params.id, pathname]);
 
-  const [indexli, setindexli] = useState(0);
-  const [items, setItems] = useState([]);
+
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
@@ -334,25 +336,7 @@ const Page = ({ params }) => {
 
   return (
     <>
-<ToastContainer
-position="top-right"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="colored"
-
-/>
-
-
-
-
-
-
+    <Musseg />
 
 
       <div

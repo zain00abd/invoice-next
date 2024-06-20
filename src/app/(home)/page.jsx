@@ -1,11 +1,15 @@
 "use client";
+
 import Link from "next/link";
 import { notFound, usePathname  } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Page = () => {
   useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    // @ts-ignore
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
   }, []);
 
   const [dataa, setdata] = useState([]);
@@ -59,6 +63,10 @@ const Page = () => {
 
   return (
     <div className="container">
+<button type="button" className="btn btn-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Top popover">
+  Popover on top
+</button>
+
       <div className="mb-5" style={{ marginTop: 20 }}>
         {dataa.map((user) => (
           <ul className="list-group" key={user._id}>
@@ -79,7 +87,7 @@ const Page = () => {
                 </Link>
                 <div className="vr" />
                 <Link
-                  href={`/view/${user._id}?${user.total}`}
+                  href={`/view/${user._id}`}
                   className="col-6 badge bg-danger rounded-pill"
                   style={{
                     fontSize: 14,
