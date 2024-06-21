@@ -34,6 +34,7 @@ const Page = ({ params }) => {
   const [iduser, setiduser] = useState(null);
   const [lastinvoice, setlastinvoice] = useState(null);
   const [isonsubmit, setisonsubmit] = useState(false);
+  console.log(arrinvoice)
 
   const router = useRouter();
 
@@ -239,11 +240,12 @@ const Page = ({ params }) => {
 
     if (arrinvoice != "") {
       if (lastarrinvoice.date == today) {
-        updateoldinvoice(invoice);
+        console.log(lastarrinvoice)
+        updateoldinvoice(invoice, lastarrinvoice);
         console.log("old invoice");
       } else {
         console.log("new invoice");
-
+        console.log(lastarrinvoice)
         addednewinvoice(invoice);
       }
     } else {
@@ -281,13 +283,14 @@ const Page = ({ params }) => {
     SubmitUpdate();
   };
 
-  const updateoldinvoice = (invoice) => {
-    lastinvoice.money.push(...invoice.money);
-    lastinvoice.user.push(...invoice.user);
-    lastinvoice.description.push(...invoice.description);
-    lastinvoice.dateofregistration.push(...invoice.dateofregistration);
+  const updateoldinvoice = (invoice, oldoneinvoice) => {
+    oldoneinvoice.money.push(...invoice.money);
+    oldoneinvoice.user.push(...invoice.user);
+    oldoneinvoice.description.push(...invoice.description);
+    oldoneinvoice.dateofregistration.push(...invoice.dateofregistration);
 
-    arrinvoice[arrinvoice.length - 1] = lastinvoice;
+    arrinvoice[arrinvoice.length - 1] = oldoneinvoice;
+    console.log(oldoneinvoice)
     console.log(arrinvoice[arrinvoice.length - 1]);
 
     SubmitUpdate();
