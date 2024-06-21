@@ -330,6 +330,7 @@ const Page = ({ params }) => {
       setinvoices(0);
       setplusinvoice(0);
       arrAllinvoice(arrinvoice);
+      filterarr()
     }
   };
 
