@@ -32,8 +32,11 @@ const Page = ({ params }) => {
   const [allindexarr, setallindexarr] = useState(0);
   const [uninvoice, setuninvoice] = useState("");
   const [iduser, setiduser] = useState(null);
-  const [lastinvoice, setlastinvoice] = useState(null);
   const [isonsubmit, setisonsubmit] = useState(false);
+  const [onedit, setonedit] = useState(false);
+  const [inpsmoney, setinpsmoney] = useState(0);
+  
+  
   console.log(arrinvoice)
 
   const router = useRouter();
@@ -48,6 +51,10 @@ const Page = ({ params }) => {
 
 
   }, [dateinv]);
+
+  const inputRefs = useRef([]);
+
+  
 
   const [InvMode, setInvMode] = useState("");
 
@@ -65,6 +72,8 @@ const Page = ({ params }) => {
 
     setshowinvoice("");
     inpfucas();
+    console.log("dfsdgsdgers")
+
   };
 
   useEffect(() => {
@@ -83,11 +92,6 @@ const Page = ({ params }) => {
         console.log(result.arrinvoce.length);
         if (result.arrinvoce.length !== 0) {
           setarrinvoice(JSON.parse(result.arrinvoce));
-          setlastinvoice(
-            JSON.parse(result.arrinvoce)[
-              JSON.parse(result.arrinvoce).length - 1
-            ]
-          );
           const getmony = JSON.parse(result.arrinvoce);
           arrAllinvoice(getmony);
 
@@ -113,19 +117,72 @@ const Page = ({ params }) => {
 
   const arrAllinvoice = (arr) => {
     let totalarruser = 0;
+    let totalinpmoney = 0;
     let arrinvo = [];
     let dateinvoice = [];
 
     arr.forEach((arrmoney) => {
       dateinvoice.push(arrmoney.date);
       const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
-      totalarruser += totalonearr;
-      arrinvo.push(totalarruser);
+      totalinpmoney += arrmoney.money.length
+      console.log(totalinpmoney)
+      totalarruser += +totalonearr;
+      arrinvo.push(+totalarruser);
     });
+    setinpsmoney(totalinpmoney)
+    console.log(inpsmoney)
     setCurrentTotal(arrinvo);
     setdateinv(dateinvoice);
   };
 
+
+  const openedit = () =>{
+    console.log("edit")
+    buttonRef.current.click();
+    setonedit(true)
+    
+  }
+
+  const unreadonly = (inp) =>{
+    console.log(inp)
+    if(inp.readOnly && onedit){
+      inp.readOnly = !inp.readOnly
+    }
+  }
+
+  const editarr = (value, id, inp) =>{
+    let layerinv = id.split("_")[3];
+    let indexarr = id.split("_")[2];
+    let nameinv = id.split("_")[1];
+    if(nameinv == "des"){
+      arrinvoice[indexarr].description[layerinv] = value
+      console.log(arrinvoice[indexarr].description)
+    }
+    else if(nameinv == "mon"){
+      
+      console.log(inp.parentElement.className)
+      if(isNaN(value)){
+        
+        value = value.slice(0, -1)
+        inp.value = value.slice(0, -1)
+        console.log(value.slice(0, -1))
+      }
+      else{
+        if(inp.parentElement.className == "list-group-item d-flex justify-content-between align-items-center list-group-item-danger"){
+
+          arrinvoice[indexarr].money[layerinv] = Number(-value)
+        }
+        else{
+
+          arrinvoice[indexarr].money[layerinv] = Number(value)
+        }
+          
+        arrAllinvoice(arrinvoice)
+
+      }
+    }
+
+  }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
     setindexli((prevCounter) => prevCounter + 1);
@@ -232,25 +289,31 @@ const Page = ({ params }) => {
   const addnewinvoice = (e) => {
     e.preventDefault();
 
-    settoday(moment().format("D/MM/YYYY"));
-    setoclock(moment().format("LT"));
+    if(!onedit){
 
-    let lastarrinvoice = arrinvoice[arrinvoice.length - 1];
-    let invoice = creatnewinvoice();
-
-    if (arrinvoice != "") {
-      if (lastarrinvoice.date == today) {
-        console.log(lastarrinvoice)
-        updateoldinvoice(invoice, lastarrinvoice);
-        console.log("old invoice");
+      settoday(moment().format("D/MM/YYYY"));
+      setoclock(moment().format("LT"));
+  
+      let lastarrinvoice = arrinvoice[arrinvoice.length - 1];
+      let invoice = creatnewinvoice();
+  
+      if (arrinvoice != "") {
+        if (lastarrinvoice.date == today) {
+          console.log(lastarrinvoice)
+          updateoldinvoice(invoice, lastarrinvoice);
+          console.log("old invoice");
+        } else {
+          console.log("new invoice");
+          console.log(lastarrinvoice)
+          addednewinvoice(invoice);
+        }
       } else {
-        console.log("new invoice");
-        console.log(lastarrinvoice)
+        console.log("no arr");
         addednewinvoice(invoice);
       }
-    } else {
-      console.log("no arr");
-      addednewinvoice(invoice);
+    }
+    else{
+      SubmitUpdate(' تم تعديل الفاتورة بنجاح ')
     }
   };
 
@@ -280,7 +343,8 @@ const Page = ({ params }) => {
 
   const addednewinvoice = (invoice) => {
     arrinvoice.push(invoice);
-    SubmitUpdate();
+    SubmitUpdate(' تم اضافة الفاتورة جديدة بنجاح ')
+
   };
 
   const updateoldinvoice = (invoice, oldoneinvoice) => {
@@ -293,11 +357,12 @@ const Page = ({ params }) => {
     console.log(oldoneinvoice)
     console.log(arrinvoice[arrinvoice.length - 1]);
 
-    SubmitUpdate();
+    SubmitUpdate(' تم اضافة اصناف للفاتورة بنجاح ')
+
   };
   console.log("baseURL");
 
-  const SubmitUpdate = async (e) => {
+  const SubmitUpdate = async (title) => {
     setisonsubmit(true);
     const baseURL = window.location.origin;
     console.log(baseURL);
@@ -321,7 +386,7 @@ const Page = ({ params }) => {
 
     if (response.ok) {
       console.log("yes");
-      toast.success(" تم اضافة الفاتورة بنجاح ");
+      toast.success(`${title}`);
       setshowinvoice("d-none");
       setisonsubmit(false);
       setInvMode("");
@@ -331,6 +396,7 @@ const Page = ({ params }) => {
       setplusinvoice(0);
       arrAllinvoice(arrinvoice);
       filterarr()
+      setonedit(false)
     }
   };
 
@@ -392,6 +458,7 @@ const Page = ({ params }) => {
               <button
                 className="btn btn-warning d-block mt-3 m-auto w-50"
                 style={{ height: 50, fontWeight: 600 }}
+                onClick={() => openedit("dsf")}
               >
                 تعديل
                 <i
@@ -454,7 +521,7 @@ const Page = ({ params }) => {
                 </li>
                 {/*** body invoce ***/}
 
-                {arr.money.reduce((acc, num) => acc + num, 0) && index != 0 ? (
+                {arr.money.reduce((acc, num) => acc + num, 0) && index != 0 && !onedit ? (
                   <div>
                     <li
                       className={`list-group-item d-flex justify-content-between align-items-center list-group-item-warning`}
@@ -528,16 +595,24 @@ const Page = ({ params }) => {
                         }`}
                       >
                         <input
+                          required
                           className=""
                           type="text"
                           style={{ width: "50%", textAlign: "center" }}
-                          id="inv_Ms"
+                          id={`inv_des_${index}_${Larr}`}
                           readOnly
                           defaultValue={arr.description[Larr]}
+                          onFocus={(e) =>{
+                            unreadonly(e.target)
+                          }}
+                          onKeyUp={(e) =>{
+                            editarr(e.target.value, e.target.id)
+                          }}
                         />
 
                         <div className="vr" />
                         <input
+                          required
                           className=""
                           type="text"
                           name="rtty"
@@ -548,9 +623,15 @@ const Page = ({ params }) => {
                             textAlign: "center",
                             direction: "ltr",
                           }}
-                          id="inv_Ms"
+                          id={`inv_mon_${index}_${Larr}`}
                           readOnly
                           defaultValue={Math.abs(arr.money[Larr])}
+                          onFocus={(e) =>{
+                            unreadonly(e.target)
+                          }}
+                          onKeyUp={(e) =>{
+                            editarr(e.target.value, e.target.id, e.target)
+                          }}
                         />
 
                         <div className="vr" />
@@ -775,7 +856,7 @@ const Page = ({ params }) => {
                 color: "rgb(0, 110, 46)",
               }}
             >
-              {InvMode === "danger" || InvMode === "success" ? (
+              {InvMode === "danger" || InvMode === "success" || onedit ? (
                 <>
                   <button
                     onClick={addnewinvoice}
@@ -820,7 +901,7 @@ const Page = ({ params }) => {
               style={{ width: "45%", textAlign: "center" }}
               id="gro_btn_invoice"
             >
-              {InvMode === "danger" || InvMode === "success" ? (
+              {InvMode === "danger" || InvMode === "success" || onedit ? (
                 <Link
                   className="btn btn-danger w-100"
                   href={`/`}
