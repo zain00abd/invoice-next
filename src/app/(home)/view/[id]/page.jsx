@@ -35,26 +35,23 @@ const Page = ({ params }) => {
   const [isonsubmit, setisonsubmit] = useState(false);
   const [onedit, setonedit] = useState(false);
   const [inpsmoney, setinpsmoney] = useState(0);
-  
-  
-  console.log(arrinvoice)
+
+  console.log(arrinvoice);
 
   const router = useRouter();
 
   useEffect(() => {
     const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverTriggerList = document.querySelectorAll(
+      '[data-bs-toggle="popover"]'
+    );
     // @ts-ignore
     const popoverList = [...popoverTriggerList].map(
       (popoverTriggerEl) => new bootstrap.Popover(popoverTriggerEl)
     );
-
-
   }, [dateinv]);
 
   const inputRefs = useRef([]);
-
-  
 
   const [InvMode, setInvMode] = useState("");
 
@@ -72,8 +69,7 @@ const Page = ({ params }) => {
 
     setshowinvoice("");
     inpfucas();
-    console.log("dfsdgsdgers")
-
+    console.log("dfsdgsdgers");
   };
 
   useEffect(() => {
@@ -94,7 +90,6 @@ const Page = ({ params }) => {
           setarrinvoice(JSON.parse(result.arrinvoce));
           const getmony = JSON.parse(result.arrinvoce);
           arrAllinvoice(getmony);
-
         } else {
           setuninvoice("لم يتم تسجيل فواتير بعد");
         }
@@ -124,65 +119,58 @@ const Page = ({ params }) => {
     arr.forEach((arrmoney) => {
       dateinvoice.push(arrmoney.date);
       const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
-      totalinpmoney += arrmoney.money.length
-      console.log(totalinpmoney)
+      totalinpmoney += arrmoney.money.length;
+      console.log(totalinpmoney);
       totalarruser += +totalonearr;
       arrinvo.push(+totalarruser);
     });
-    setinpsmoney(totalinpmoney)
-    console.log(inpsmoney)
+    setinpsmoney(totalinpmoney);
+    console.log(inpsmoney);
     setCurrentTotal(arrinvo);
     setdateinv(dateinvoice);
   };
 
-
-  const openedit = () =>{
-    console.log("edit")
+  const openedit = () => {
+    console.log("edit");
     buttonRef.current.click();
-    setonedit(true)
-    
-  }
+    setonedit(true);
+  };
 
-  const unreadonly = (inp) =>{
-    console.log(inp)
-    if(inp.readOnly && onedit){
-      inp.readOnly = !inp.readOnly
+  const unreadonly = (inp) => {
+    console.log(inp.className);
+    if (inp.readOnly && onedit) {
+      inp.readOnly = !inp.readOnly;
+      inp.className = "inp_invoice_write";
     }
-  }
+  };
 
-  const editarr = (value, id, inp) =>{
+  const editarr = (value, id, inp) => {
     let layerinv = id.split("_")[3];
     let indexarr = id.split("_")[2];
     let nameinv = id.split("_")[1];
-    if(nameinv == "des"){
-      arrinvoice[indexarr].description[layerinv] = value
-      console.log(arrinvoice[indexarr].description)
-    }
-    else if(nameinv == "mon"){
-      
-      console.log(inp.parentElement.className)
-      if(isNaN(value)){
-        
-        value = value.slice(0, -1)
-        inp.value = value.slice(0, -1)
-        console.log(value.slice(0, -1))
-      }
-      else{
-        if(inp.parentElement.className == "list-group-item d-flex justify-content-between align-items-center list-group-item-danger"){
-
-          arrinvoice[indexarr].money[layerinv] = Number(-value)
+    if (nameinv == "des") {
+      arrinvoice[indexarr].description[layerinv] = value;
+      console.log(arrinvoice[indexarr].description);
+    } else if (nameinv == "mon") {
+      console.log(inp.parentElement.className);
+      if (isNaN(value)) {
+        value = value.slice(0, -1);
+        inp.value = value.slice(0, -1);
+        console.log(value.slice(0, -1));
+      } else {
+        if (
+          inp.parentElement.className ==
+          "list-group-item d-flex justify-content-between align-items-center list-group-item-danger"
+        ) {
+          arrinvoice[indexarr].money[layerinv] = Number(-value);
+        } else {
+          arrinvoice[indexarr].money[layerinv] = Number(value);
         }
-        else{
 
-          arrinvoice[indexarr].money[layerinv] = Number(value)
-        }
-          
-        arrAllinvoice(arrinvoice)
-
+        arrAllinvoice(arrinvoice);
       }
     }
-
-  }
+  };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
     setindexli((prevCounter) => prevCounter + 1);
@@ -289,31 +277,29 @@ const Page = ({ params }) => {
   const addnewinvoice = (e) => {
     e.preventDefault();
 
-    if(!onedit){
-
+    if (!onedit) {
       settoday(moment().format("D/MM/YYYY"));
       setoclock(moment().format("LT"));
-  
+
       let lastarrinvoice = arrinvoice[arrinvoice.length - 1];
       let invoice = creatnewinvoice();
-  
+
       if (arrinvoice != "") {
         if (lastarrinvoice.date == today) {
-          console.log(lastarrinvoice)
+          console.log(lastarrinvoice);
           updateoldinvoice(invoice, lastarrinvoice);
           console.log("old invoice");
         } else {
           console.log("new invoice");
-          console.log(lastarrinvoice)
+          console.log(lastarrinvoice);
           addednewinvoice(invoice);
         }
       } else {
         console.log("no arr");
         addednewinvoice(invoice);
       }
-    }
-    else{
-      SubmitUpdate(' تم تعديل الفاتورة بنجاح ')
+    } else {
+      SubmitUpdate(" تم تعديل الفاتورة بنجاح ");
     }
   };
 
@@ -343,8 +329,7 @@ const Page = ({ params }) => {
 
   const addednewinvoice = (invoice) => {
     arrinvoice.push(invoice);
-    SubmitUpdate(' تم اضافة الفاتورة جديدة بنجاح ')
-
+    SubmitUpdate(" تم اضافة الفاتورة جديدة بنجاح ");
   };
 
   const updateoldinvoice = (invoice, oldoneinvoice) => {
@@ -354,11 +339,10 @@ const Page = ({ params }) => {
     oldoneinvoice.dateofregistration.push(...invoice.dateofregistration);
 
     arrinvoice[arrinvoice.length - 1] = oldoneinvoice;
-    console.log(oldoneinvoice)
+    console.log(oldoneinvoice);
     console.log(arrinvoice[arrinvoice.length - 1]);
 
-    SubmitUpdate(' تم اضافة اصناف للفاتورة بنجاح ')
-
+    SubmitUpdate(" تم اضافة اصناف للفاتورة بنجاح ");
   };
   console.log("baseURL");
 
@@ -395,13 +379,13 @@ const Page = ({ params }) => {
       setinvoices(0);
       setplusinvoice(0);
       arrAllinvoice(arrinvoice);
-      filterarr()
-      setonedit(false)
+      filterarr();
+      setonedit(false);
     }
   };
 
   return (
-    <>
+    <div style={{ backgroundColor: `${onedit && "#ffd54a49"}` }}>
       <Musseg />
 
       <div
@@ -516,12 +500,15 @@ const Page = ({ params }) => {
                   </div>
                   <div className="vr" />
                   <div style={{ width: "50%", textAlign: "center" }}>
-                    اخراج والوقت
+                    {!onedit ?  "اخراج والوقت" : "مسح فاتورة"}
+                     
                   </div>
                 </li>
                 {/*** body invoce ***/}
 
-                {arr.money.reduce((acc, num) => acc + num, 0) && index != 0 && !onedit ? (
+                {arr.money.reduce((acc, num) => acc + num, 0) &&
+                index != 0 &&
+                !onedit ? (
                   <div>
                     <li
                       className={`list-group-item d-flex justify-content-between align-items-center list-group-item-warning`}
@@ -596,24 +583,24 @@ const Page = ({ params }) => {
                       >
                         <input
                           required
-                          className=""
+                          className="inp_invoice"
                           type="text"
                           style={{ width: "50%", textAlign: "center" }}
                           id={`inv_des_${index}_${Larr}`}
                           readOnly
                           defaultValue={arr.description[Larr]}
-                          onFocus={(e) =>{
-                            unreadonly(e.target)
+                          onFocus={(e) => {
+                            unreadonly(e.target);
                           }}
-                          onKeyUp={(e) =>{
-                            editarr(e.target.value, e.target.id)
+                          onKeyUp={(e) => {
+                            editarr(e.target.value, e.target.id);
                           }}
                         />
 
                         <div className="vr" />
                         <input
                           required
-                          className=""
+                          className="inp_invoice"
                           type="text"
                           name="rtty"
                           pattern="[0-9]*"
@@ -626,33 +613,60 @@ const Page = ({ params }) => {
                           id={`inv_mon_${index}_${Larr}`}
                           readOnly
                           defaultValue={Math.abs(arr.money[Larr])}
-                          onFocus={(e) =>{
-                            unreadonly(e.target)
+                          onFocus={(e) => {
+                            unreadonly(e.target);
                           }}
-                          onKeyUp={(e) =>{
-                            editarr(e.target.value, e.target.id, e.target)
+                          onKeyUp={(e) => {
+                            editarr(e.target.value, e.target.id, e.target);
                           }}
                         />
 
                         <div className="vr" />
-                        <button
-                          style={{
-                            width: "48%",
-                            textAlign: "center",
-                            fontWeight: 600,
-                            border: "none",
-                            color: "#000000",
-                            background: "none",
-                          }}
-                          type="button"
-                          className="btn btn-secondary"
-                          data-bs-container="body"
-                          data-bs-toggle="popover"
-                          data-bs-placement="right"
-                          data-bs-content={arr.dateofregistration[Larr]}
-                        >
-                          {arr.user[Larr]}
-                        </button>
+
+                        {onedit ? (
+                          <div
+                            style={{
+                              width: "48%",
+                              textAlign: "center",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              className="btn-check border-0"
+                              id={`delet_${index}_${Larr}`}
+                              autoComplete="off"
+                            />
+                            <label
+                              style={{ border: "none", background: "none" }}
+                              className="btn btn-outline-danger"
+                              htmlFor={`delet_${index}_${Larr}`}
+                            >
+                              <i
+                                className="fa-regular fa-trash-can"
+                                style={{ Color: "#8a0000" }}
+                              ></i>
+                            </label>
+                          </div>
+                        ) : (
+                          <button
+                            style={{
+                              width: "48%",
+                              textAlign: "center",
+                              fontWeight: 600,
+                              border: "none",
+                              color: "#000000",
+                              background: "none",
+                            }}
+                            type="button"
+                            className="btn btn-secondary"
+                            data-bs-container="body"
+                            data-bs-toggle="popover"
+                            data-bs-placement="right"
+                            data-bs-content={arr.dateofregistration[Larr]}
+                          >
+                            {arr.user[Larr]}
+                          </button>
+                        )}
                       </li>
                     </div>
                   );
@@ -940,7 +954,7 @@ const Page = ({ params }) => {
 
         <button className="d-none" type="submit" id="myForm" />
       </form>
-    </>
+    </div>
   );
 };
 
