@@ -158,10 +158,8 @@ const Page = ({ params }) => {
         inp.value = value.slice(0, -1);
         console.log(value.slice(0, -1));
       } else {
-        if (
-          inp.parentElement.className ==
-          "list-group-item d-flex justify-content-between align-items-center list-group-item-danger"
-        ) {
+        if(inp.parentElement.className == "list-group-item d-flex justify-content-between align-items-center list-group-item-danger") 
+        {
           arrinvoice[indexarr].money[layerinv] = Number(-value);
         } else {
           arrinvoice[indexarr].money[layerinv] = Number(value);
@@ -171,6 +169,23 @@ const Page = ({ params }) => {
       }
     }
   };
+
+  const deleteoneitem = (item) =>{
+  // console.log(item.parentElement.previousElementSibling.previousElementSibling)
+  // console.log(item)
+  // console.log(item.parentElement.parentElement.classList.contains('focasdelet'))
+
+  if(!item.parentElement.parentElement.classList.contains('focasdelet')){
+    item.parentElement.parentElement.classList.add('focasdelet')
+  }
+  else{
+    item.parentElement.parentElement.classList.remove('focasdelet')
+  }
+
+  }
+
+
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
     setindexli((prevCounter) => prevCounter + 1);
@@ -634,6 +649,9 @@ const Page = ({ params }) => {
                               type="checkbox"
                               className="btn-check border-0"
                               id={`delet_${index}_${Larr}`}
+                              onClick={(e) =>{
+                                deleteoneitem(e.target)
+                              }}
                               autoComplete="off"
                             />
                             <label
