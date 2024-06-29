@@ -35,8 +35,11 @@ const Page = ({ params }) => {
   const [isonsubmit, setisonsubmit] = useState(false);
   const [onedit, setonedit] = useState(false);
   const [inpsmoney, setinpsmoney] = useState(0);
+  const [arrdeletitem, setarrdeletitem] = useState([]);
+  
 
   console.log(arrinvoice);
+  console.log(arrdeletitem)
 
   const router = useRouter();
 
@@ -170,18 +173,43 @@ const Page = ({ params }) => {
     }
   };
 
-  const deleteoneitem = (item) =>{
-  // console.log(item.parentElement.previousElementSibling.previousElementSibling)
-  // console.log(item)
-  // console.log(item.parentElement.parentElement.classList.contains('focasdelet'))
+  const Selectitemdelete = (item) =>{
+    let arritemdelet = []
+    arritemdelet = arrdeletitem
 
-  if(!item.parentElement.parentElement.classList.contains('focasdelet')){
-    item.parentElement.parentElement.classList.add('focasdelet')
-  }
-  else{
-    item.parentElement.parentElement.classList.remove('focasdelet')
+
+    // console.log(item.parentElement.previousElementSibling.previousElementSibling)
+    // console.log(item)
+    // console.log(item.parentElement.parentElement.classList.contains('focasdelet'))
+
+    if(!item.parentElement.parentElement.classList.contains('focasdelet')){
+      item.parentElement.parentElement.classList.add('focasdelet')
+      arritemdelet.push(item.id)
+      setarrdeletitem(arritemdelet)
+      console.log(item.id)
+    }
+    else{
+      item.parentElement.parentElement.classList.remove('focasdelet')
+      arritemdelet = arritemdelet.filter(function (value) {
+        return value != item.id
+      })
+    }
+    setarrdeletitem(arritemdelet)
+    
   }
 
+  const deletitem = () =>{
+    arrdeletitem.forEach(item => {
+      let numarr = item.split("_")[1]
+      let indexinv = item.split("_")[2]
+      console.log(numarr + ' / ' + indexinv)
+      
+      arrinvoice[numarr].user.splice(indexinv, 1)
+      arrinvoice[numarr].money.splice(indexinv, 1)
+      arrinvoice[numarr].description.splice(indexinv, 1)
+      arrinvoice[numarr].dateofregistration.splice(indexinv, 1)
+      console.log(arrinvoice[numarr])
+    });
   }
 
 
@@ -314,6 +342,7 @@ const Page = ({ params }) => {
         addednewinvoice(invoice);
       }
     } else {
+      deletitem()
       SubmitUpdate(" تم تعديل الفاتورة بنجاح ");
     }
   };
@@ -400,7 +429,7 @@ const Page = ({ params }) => {
   };
 
   return (
-    <div style={{ backgroundColor: `${onedit && "#ffd54a49"}` }}>
+    <div style={{ backgroundColor: `${onedit ? "#ffd54a49" : ""}` }}>
       <Musseg />
 
       <div
@@ -480,7 +509,7 @@ const Page = ({ params }) => {
           </div>
         </div>
       </div>
-      <form action="/edit/<%= arr._id %>?_method=PUT" method="post">
+      <form action={`/view/${iduser}`} method="post">
         <p className="d-none" id="date_today"></p>
         <p className="d-none" id="data_req"></p>
         <input
@@ -650,7 +679,7 @@ const Page = ({ params }) => {
                               className="btn-check border-0"
                               id={`delet_${index}_${Larr}`}
                               onClick={(e) =>{
-                                deleteoneitem(e.target)
+                                Selectitemdelete(e.target)
                               }}
                               autoComplete="off"
                             />
