@@ -173,9 +173,9 @@ const Page = ({ params }) => {
     }
   };
 
+  let arritemdelet = []
   const Selectitemdelete = (item) =>{
-    let arritemdelet = []
-    arritemdelet = arrdeletitem
+    arritemdelet = [...arrdeletitem]
 
 
     // console.log(item.parentElement.previousElementSibling.previousElementSibling)
@@ -185,7 +185,7 @@ const Page = ({ params }) => {
     if(!item.parentElement.parentElement.classList.contains('focasdelet')){
       item.parentElement.parentElement.classList.add('focasdelet')
       arritemdelet.push(item.id)
-      setarrdeletitem(arritemdelet)
+      console.log(arrdeletitem)
       console.log(item.id)
     }
     else{
@@ -198,19 +198,26 @@ const Page = ({ params }) => {
     
   }
 
-  const deletitem = () =>{
-    arrdeletitem.forEach(item => {
-      let numarr = item.split("_")[1]
-      let indexinv = item.split("_")[2]
-      console.log(numarr + ' / ' + indexinv)
+  const deletitem = () => {
+    let arrfackinvoice = [...arrinvoice]; // نسخ المصفوفة لتجنب تعديل المصفوفة الأصلية مباشرة
+    console.log("hewu111111111");
+    
+    // تكرار العناصر بالعكس
+    arrdeletitem.slice().reverse().map(item => {
+      let numarr = item.split("_")[1];
+      let indexinv = item.split("_")[2];
+      console.log(numarr + ' / ' + indexinv);
       
-      arrinvoice[numarr].user.splice(indexinv, 1)
-      arrinvoice[numarr].money.splice(indexinv, 1)
-      arrinvoice[numarr].description.splice(indexinv, 1)
-      arrinvoice[numarr].dateofregistration.splice(indexinv, 1)
-      console.log(arrinvoice[numarr])
+      arrfackinvoice[numarr].user.splice(indexinv, 1);
+      arrfackinvoice[numarr].money.splice(indexinv, 1);
+      arrfackinvoice[numarr].description.splice(indexinv, 1);
+      arrfackinvoice[numarr].dateofregistration.splice(indexinv, 1);
+      console.log(arrfackinvoice[numarr]);
     });
+  
+    setarrinvoice(arrfackinvoice); // تحديث الحالة بالمصفوفة المعدلة
   }
+  
 
 
 
@@ -980,18 +987,34 @@ const Page = ({ params }) => {
                     style={{
                       width: "100%",
                       fontWeight: 600,
-                      letterSpacing: "1.1px",
+                      letterSpacing: "1.8px",
+                      backgroundColor:`${currentTotal[currentTotal.length - 1] > 0 ? "#22664ae0" : "#940000"}`,
+                      color:"white"
                     }}
-                    className="btn btn-danger"
+                    className="btn"
                     type="button"
                     data-bs-toggle="modal"
                     data-bs-target="#staticBackdrop"
                   >
-                    <i
-                      className="fa-solid fa-sack-dollar fa-lg"
-                      style={{ color: "#ffffff" }}
-                    />
-                    {Math.abs(currentTotal[currentTotal.length - 1])}
+                    {isNaN(currentTotal[currentTotal.length - 1]) ?
+                    <div className="">
+                        <span className="">Loading...</span>
+                        <div className="spinner-grow  text-light" role="status" style={{width:"20px", height:"20px"}}>
+                        </div>
+                    </div>
+                     : 
+                     <>
+
+                        <i
+                          className="fa-solid fa-sack-dollar fa-lg"
+                          style={{ color: "#ffffff", left:"-5px", position:"relative" }}
+                        />
+                        {currentTotal[currentTotal.length - 1] > 0 ? '+' : ""}
+                        {Math.abs(currentTotal[currentTotal.length - 1])}
+                     </>
+                     
+                     }
+
                   </button>
                 </div>
               )}
