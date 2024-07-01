@@ -637,44 +637,50 @@ const Page = ({ params }) => {
                             : "list-group-item-success"
                         } row g-0`}
                       >
-                        <input
-                          required
-                          className="inp_invoice col-4"
-                          type="text"
-                          style={{ textAlign: "center" }}
-                          id={`inv_des_${index}_${Larr}`}
-                          readOnly
-                          defaultValue={arr.description[Larr]}
-                          onFocus={(e) => {
-                            unreadonly(e.target);
-                          }}
-                          onKeyUp={(e) => {
-                            editarr(e.target.value, e.target.id);
-                          }}
-                        />
+                        <div className="col-4">
+                          <input
+                            required
+                            className="inp_invoice"
+                            type="text"
+                            style={{ textAlign: "center", width:"100%" }}
+                            id={`inv_des_${index}_${Larr}`}
+                            readOnly
+                            defaultValue={arr.description[Larr]}
+                            onFocus={(e) => {
+                              unreadonly(e.target);
+                            }}
+                            onKeyUp={(e) => {
+                              editarr(e.target.value, e.target.id);
+                            }}
+                          />
+                        </div>
 
                         <div className="vr" />
-                        <input
-                          required
-                          className="inp_invoice col-3"
-                          type="text"
-                          name="rtty"
-                          pattern="[0-9]*"
-                          inputMode="numeric"
-                          style={{
-                            textAlign: "center",
-                            direction: "ltr",
-                          }}
-                          id={`inv_mon_${index}_${Larr}`}
-                          readOnly
-                          defaultValue={Math.abs(arr.money[Larr])}
-                          onFocus={(e) => {
-                            unreadonly(e.target);
-                          }}
-                          onKeyUp={(e) => {
-                            editarr(e.target.value, e.target.id, e.target);
-                          }}
-                        />
+
+                        <div className="col-3">
+                          <input
+                            required
+                            className="inp_invoice col-3"
+                            type="text"
+                            name="rtty"
+                            pattern="[0-9]*"
+                            inputMode="numeric"
+                            style={{
+                              textAlign: "center",
+                              direction: "ltr",
+                              width: "100%",
+                            }}
+                            id={`inv_mon_${index}_${Larr}`}
+                            readOnly
+                            defaultValue={Math.abs(arr.money[Larr])}
+                            onFocus={(e) => {
+                              unreadonly(e.target);
+                            }}
+                            onKeyUp={(e) => {
+                              editarr(e.target.value, e.target.id, e.target);
+                            }}
+                          />
+                        </div>
 
                         <div className="vr" />
 
