@@ -683,10 +683,11 @@ const Page = ({ params }) => {
                             style={{
                               textAlign: "center",
                             }}
+                            className="col-4"
                           >
                             <input
                               type="checkbox"
-                              className="btn-check border-0 col-4"
+                              className="btn-check border-0"
                               id={`delet_${index}_${Larr}`}
                               onClick={(e) => {
                                 Selectitemdelete(e.target);
