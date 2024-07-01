@@ -36,10 +36,9 @@ const Page = ({ params }) => {
   const [onedit, setonedit] = useState(false);
   const [inpsmoney, setinpsmoney] = useState(0);
   const [arrdeletitem, setarrdeletitem] = useState([]);
-  
 
   console.log(arrinvoice);
-  console.log(arrdeletitem)
+  console.log(arrdeletitem);
 
   const router = useRouter();
 
@@ -158,11 +157,13 @@ const Page = ({ params }) => {
       console.log(inp.parentElement.className);
       if (isNaN(value)) {
         value = value.slice(0, -1);
-        inp.value = value.slice(0, -1);
-        console.log(value.slice(0, -1));
+        inp.value = value;
+        // console.log(value.slice(0, -1));
       } else {
-        if(inp.parentElement.className == "list-group-item d-flex justify-content-between align-items-center list-group-item-danger") 
-        {
+        if (
+          inp.parentElement.className ==
+          "list-group-item d-flex justify-content-between align-items-center list-group-item-danger"
+        ) {
           arrinvoice[indexarr].money[layerinv] = Number(-value);
         } else {
           arrinvoice[indexarr].money[layerinv] = Number(value);
@@ -173,53 +174,50 @@ const Page = ({ params }) => {
     }
   };
 
-  let arritemdelet = []
-  const Selectitemdelete = (item) =>{
-    arritemdelet = [...arrdeletitem]
-
+  let arritemdelet = [];
+  const Selectitemdelete = (item) => {
+    arritemdelet = [...arrdeletitem];
 
     // console.log(item.parentElement.previousElementSibling.previousElementSibling)
     // console.log(item)
     // console.log(item.parentElement.parentElement.classList.contains('focasdelet'))
 
-    if(!item.parentElement.parentElement.classList.contains('focasdelet')){
-      item.parentElement.parentElement.classList.add('focasdelet')
-      arritemdelet.push(item.id)
-      console.log(arrdeletitem)
-      console.log(item.id)
-    }
-    else{
-      item.parentElement.parentElement.classList.remove('focasdelet')
+    if (!item.parentElement.parentElement.classList.contains("focasdelet")) {
+      item.parentElement.parentElement.classList.add("focasdelet");
+      arritemdelet.push(item.id);
+      console.log(arrdeletitem);
+      console.log(item.id);
+    } else {
+      item.parentElement.parentElement.classList.remove("focasdelet");
       arritemdelet = arritemdelet.filter(function (value) {
-        return value != item.id
-      })
+        return value != item.id;
+      });
     }
-    setarrdeletitem(arritemdelet)
-    
-  }
+    setarrdeletitem(arritemdelet);
+  };
 
   const deletitem = () => {
     let arrfackinvoice = [...arrinvoice]; // نسخ المصفوفة لتجنب تعديل المصفوفة الأصلية مباشرة
     console.log("hewu111111111");
-    
+
     // تكرار العناصر بالعكس
-    arrdeletitem.slice().reverse().map(item => {
-      let numarr = item.split("_")[1];
-      let indexinv = item.split("_")[2];
-      console.log(numarr + ' / ' + indexinv);
-      
-      arrfackinvoice[numarr].user.splice(indexinv, 1);
-      arrfackinvoice[numarr].money.splice(indexinv, 1);
-      arrfackinvoice[numarr].description.splice(indexinv, 1);
-      arrfackinvoice[numarr].dateofregistration.splice(indexinv, 1);
-      console.log(arrfackinvoice[numarr]);
-    });
-  
+    arrdeletitem
+      .slice()
+      .reverse()
+      .map((item) => {
+        let numarr = item.split("_")[1];
+        let indexinv = item.split("_")[2];
+        console.log(numarr + " / " + indexinv);
+
+        arrfackinvoice[numarr].user.splice(indexinv, 1);
+        arrfackinvoice[numarr].money.splice(indexinv, 1);
+        arrfackinvoice[numarr].description.splice(indexinv, 1);
+        arrfackinvoice[numarr].dateofregistration.splice(indexinv, 1);
+        console.log(arrfackinvoice[numarr]);
+      });
+
     setarrinvoice(arrfackinvoice); // تحديث الحالة بالمصفوفة المعدلة
-  }
-  
-
-
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
@@ -349,7 +347,7 @@ const Page = ({ params }) => {
         addednewinvoice(invoice);
       }
     } else {
-      deletitem()
+      deletitem();
       SubmitUpdate(" تم تعديل الفاتورة بنجاح ");
     }
   };
@@ -543,16 +541,17 @@ const Page = ({ params }) => {
                 style={{ padding: 0 }}
                 key={index}
               >
-                <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-primary border border-1 border-primary">
-                  <div style={{ width: "50%", textAlign: "center" }}>الوصف</div>
+                <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-primary border border-1 border-primary row g-0">
+                  <div className="col-4" style={{ textAlign: "center" }}>
+                    الوصف
+                  </div>
                   <div className="vr" />
-                  <div style={{ width: "50%", textAlign: "center" }}>
+                  <div className="col-3" style={{ textAlign: "center" }}>
                     المبلغ
                   </div>
                   <div className="vr" />
-                  <div style={{ width: "50%", textAlign: "center" }}>
-                    {!onedit ?  "اخراج والوقت" : "مسح فاتورة"}
-                     
+                  <div className="col-4" style={{ textAlign: "center" }}>
+                    {!onedit ? "اخراج والوقت" : "مسح فاتورة"}
                   </div>
                 </li>
                 {/*** body invoce ***/}
@@ -562,60 +561,66 @@ const Page = ({ params }) => {
                 !onedit ? (
                   <div>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center list-group-item-warning`}
+                      className={`list-group-item d-flex justify-content-between align-items-center list-group-item-warning row g-0`}
                     >
-                      <input
-                        className=""
-                        type="text"
-                        style={{ width: "50%", textAlign: "center" }}
-                        id="inv_Ms"
-                        readOnly
-                        defaultValue={"فاتورة سابقة"}
-                      />
+                      <div className="col-4">
+                        <input
+                          className=""
+                          type="text"
+                          style={{ width: "100%", textAlign: "center" }}
+                          id="inv_Ms"
+                          readOnly
+                          defaultValue={"فاتورة سابقة"}
+                        />
+                      </div>
 
                       <div className="vr" />
-                      <input
-                        className={`${
-                          currentTotal[index - 1] < 0
-                            ? "text-danger"
-                            : currentTotal[index - 1] > 0
-                            ? "text-success"
-                            : ""
-                        }`}
-                        type="text"
-                        name="rtty"
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        style={{
-                          width: "50%",
-                          textAlign: "center",
-                          direction: "ltr",
-                        }}
-                        id="inv_Ms"
-                        readOnly
-                        defaultValue={
-                          currentTotal[index - 1] > 0
-                            ? "+" + currentTotal[index - 1]
-                            : Math.abs(currentTotal[index - 1])
-                        }
-                      />
+                      <div className="col-3">
+                        <input
+                          className={`${
+                            currentTotal[index - 1] < 0
+                              ? "text-danger"
+                              : currentTotal[index - 1] > 0
+                              ? "text-success"
+                              : ""
+                          } `}
+                          type="text"
+                          name="rtty"
+                          pattern="[0-9]*"
+                          inputMode="numeric"
+                          style={{
+                            width: "100%",
+                            textAlign: "center",
+                            direction: "ltr",
+                          }}
+                          id="inv_Ms"
+                          readOnly
+                          defaultValue={
+                            currentTotal[index - 1] > 0
+                              ? "+" + currentTotal[index - 1]
+                              : Math.abs(currentTotal[index - 1])
+                          }
+                        />
+                      </div>
 
                       <div className="vr" />
-                      <button
-                        style={{
-                          width: "48%",
-                          textAlign: "center",
-                          fontWeight: 600,
-                          border: "none",
-                          color: "#000000",
-                        }}
-                        type="button"
-                        className="btn"
-                        data-bs-container="body"
-                        data-bs-placement="right"
-                      >
-                        {dateinv[index - 1]}
-                      </button>
+                      <div className="col-4">
+                        <button
+                          style={{
+                            width: "100%",
+                            textAlign: "center",
+                            fontWeight: 600,
+                            border: "none",
+                            color: "#000000",
+                          }}
+                          type="button"
+                          className="btn"
+                          data-bs-container="body"
+                          data-bs-placement="right"
+                        >
+                          {dateinv[index - 1]}
+                        </button>
+                      </div>
                     </li>
                   </div>
                 ) : (
@@ -630,13 +635,13 @@ const Page = ({ params }) => {
                           arr.description[Larr] !== "تسديد مبلغ"
                             ? "list-group-item-danger"
                             : "list-group-item-success"
-                        }`}
+                        } row g-0`}
                       >
                         <input
                           required
-                          className="inp_invoice"
+                          className="inp_invoice col-4"
                           type="text"
-                          style={{ width: "50%", textAlign: "center" }}
+                          style={{ textAlign: "center" }}
                           id={`inv_des_${index}_${Larr}`}
                           readOnly
                           defaultValue={arr.description[Larr]}
@@ -651,13 +656,12 @@ const Page = ({ params }) => {
                         <div className="vr" />
                         <input
                           required
-                          className="inp_invoice"
+                          className="inp_invoice col-3"
                           type="text"
                           name="rtty"
                           pattern="[0-9]*"
                           inputMode="numeric"
                           style={{
-                            width: "50%",
                             textAlign: "center",
                             direction: "ltr",
                           }}
@@ -677,16 +681,15 @@ const Page = ({ params }) => {
                         {onedit ? (
                           <div
                             style={{
-                              width: "48%",
                               textAlign: "center",
                             }}
                           >
                             <input
                               type="checkbox"
-                              className="btn-check border-0"
+                              className="btn-check border-0 col-4"
                               id={`delet_${index}_${Larr}`}
-                              onClick={(e) =>{
-                                Selectitemdelete(e.target)
+                              onClick={(e) => {
+                                Selectitemdelete(e.target);
                               }}
                               autoComplete="off"
                             />
@@ -704,7 +707,6 @@ const Page = ({ params }) => {
                         ) : (
                           <button
                             style={{
-                              width: "48%",
                               textAlign: "center",
                               fontWeight: 600,
                               border: "none",
@@ -712,7 +714,7 @@ const Page = ({ params }) => {
                               background: "none",
                             }}
                             type="button"
-                            className="btn btn-secondary"
+                            className="btn btn-secondary col-4"
                             data-bs-container="body"
                             data-bs-toggle="popover"
                             data-bs-placement="right"
@@ -987,34 +989,42 @@ const Page = ({ params }) => {
                     style={{
                       width: "100%",
                       fontWeight: 600,
-                      letterSpacing: "1.8px",
-                      backgroundColor:`${currentTotal[currentTotal.length - 1] > 0 ? "#22664ae0" : "#940000"}`,
-                      color:"white"
+                      letterSpacing: "1.3px",
+                      backgroundColor: `${
+                        currentTotal[currentTotal.length - 1] > 0
+                          ? "#22664ae0"
+                          : "#940000"
+                      }`,
+                      color: "white",
                     }}
                     className="btn"
                     type="button"
                     data-bs-toggle="modal"
                     data-bs-target="#staticBackdrop"
                   >
-                    {isNaN(currentTotal[currentTotal.length - 1]) ?
-                    <div className="">
+                    {isNaN(currentTotal[currentTotal.length - 1]) ? (
+                      <div className="">
                         <span className="">Loading...</span>
-                        <div className="spinner-grow  text-light" role="status" style={{width:"20px", height:"20px"}}>
-                        </div>
-                    </div>
-                     : 
-                     <>
-
+                        <div
+                          className="spinner-grow  text-light"
+                          role="status"
+                          style={{ width: "20px", height: "20px" }}
+                        ></div>
+                      </div>
+                    ) : (
+                      <>
                         <i
                           className="fa-solid fa-sack-dollar fa-lg"
-                          style={{ color: "#ffffff", left:"-5px", position:"relative" }}
+                          style={{
+                            color: "#ffffff",
+                            left: "-5px",
+                            position: "relative",
+                          }}
                         />
-                        {currentTotal[currentTotal.length - 1] > 0 ? '+' : ""}
+                        {currentTotal[currentTotal.length - 1] > 0 ? "+" : ""}
                         {Math.abs(currentTotal[currentTotal.length - 1])}
-                     </>
-                     
-                     }
-
+                      </>
+                    )}
                   </button>
                 </div>
               )}
