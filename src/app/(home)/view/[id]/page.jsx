@@ -34,8 +34,10 @@ const Page = ({ params }) => {
   const [iduser, setiduser] = useState(null);
   const [isonsubmit, setisonsubmit] = useState(false);
   const [onedit, setonedit] = useState(false);
-  const [inpsmoney, setinpsmoney] = useState(0);
+  const [inpsmoney, setinpsmoney] = useState([]);
   const [arrdeletitem, setarrdeletitem] = useState([]);
+  const [numindex, setnumindex] = useState(0);
+  
 
   console.log(arrinvoice);
   console.log(arrdeletitem);
@@ -85,9 +87,9 @@ const Page = ({ params }) => {
         setadres(result.addres);
         setphone(result.phone);
         setiduser(result._id);
-        console.log(result.phone);
+        // console.log(result.phone);
 
-        console.log(result.arrinvoce.length);
+        // console.log(result.arrinvoce.length);
         if (result.arrinvoce.length !== 0) {
           setarrinvoice(JSON.parse(result.arrinvoce));
           const getmony = JSON.parse(result.arrinvoce);
@@ -117,17 +119,21 @@ const Page = ({ params }) => {
     let totalinpmoney = 0;
     let arrinvo = [];
     let dateinvoice = [];
+    let numincoie = [0];
 
-    arr.forEach((arrmoney) => {
+    arr.forEach((arrmoney, index) => {
+
+
       dateinvoice.push(arrmoney.date);
       const totalonearr = arrmoney.money.reduce((acc, num) => acc + num, 0);
       totalinpmoney += arrmoney.money.length;
-      console.log(totalinpmoney);
+
+
+      numincoie.push(totalinpmoney)
       totalarruser += +totalonearr;
       arrinvo.push(+totalarruser);
     });
-    setinpsmoney(totalinpmoney);
-    console.log(inpsmoney);
+    setinpsmoney(numincoie);
     setCurrentTotal(arrinvo);
     setdateinv(dateinvoice);
   };
@@ -136,6 +142,8 @@ const Page = ({ params }) => {
     console.log("edit");
     buttonRef.current.click();
     setonedit(true);
+    console.log(inpsmoney);
+
   };
 
   const unreadonly = (inp) => {
@@ -178,46 +186,59 @@ const Page = ({ params }) => {
   const Selectitemdelete = (item) => {
     arritemdelet = [...arrdeletitem];
 
+    let index = item.id.split("_")[3];
+  
+
     // console.log(item.parentElement.previousElementSibling.previousElementSibling)
     // console.log(item)
     // console.log(item.parentElement.parentElement.classList.contains('focasdelet'))
 
     if (!item.parentElement.parentElement.classList.contains("focasdelet")) {
       item.parentElement.parentElement.classList.add("focasdelet");
-      arritemdelet.push(item.id);
+      arritemdelet[index] = item.id;
+      // arritemdelet = arritemdelet.filter(function (value) {
+      //   return value != null;
+      // });
       console.log(arrdeletitem);
-      console.log(item.id);
     } else {
       item.parentElement.parentElement.classList.remove("focasdelet");
-      arritemdelet = arritemdelet.filter(function (value) {
-        return value != item.id;
-      });
+      arritemdelet[index] = undefined;
+      console.log(arrdeletitem);
     }
     setarrdeletitem(arritemdelet);
   };
 
   const deletitem = () => {
-    let arrfackinvoice = [...arrinvoice]; // نسخ المصفوفة لتجنب تعديل المصفوفة الأصلية مباشرة
-    console.log("hewu111111111");
+    
+    setarrdeletitem(arrdeletitem.filter(function (value) {return value != '' && value != null && value != undefined}))
+    console.log(arrdeletitem)
+    
+    handeldalete()
+
+  };
+
+  const handeldalete = () =>{
+    let arrfackinvoice = [...arrinvoice];  
 
     // تكرار العناصر بالعكس
-    arrdeletitem
-      .slice()
-      .reverse()
-      .map((item) => {
-        let numarr = item.split("_")[1];
-        let indexinv = item.split("_")[2];
-        console.log(numarr + " / " + indexinv);
+      arrdeletitem.reverse().slice().map((item) => {
+        if(item != undefined){
+          console.log(item)
+  
+          let numarr = item.split("_")[1];
+          let indexinv = item.split("_")[2];
+          console.log(numarr + " / " + indexinv);
+  
+          arrfackinvoice[numarr].user.splice(indexinv, 1);
+          arrfackinvoice[numarr].money.splice(indexinv, 1);
+          arrfackinvoice[numarr].description.splice(indexinv, 1);
+          arrfackinvoice[numarr].dateofregistration.splice(indexinv, 1);
+          console.log(arrfackinvoice[numarr]);
 
-        arrfackinvoice[numarr].user.splice(indexinv, 1);
-        arrfackinvoice[numarr].money.splice(indexinv, 1);
-        arrfackinvoice[numarr].description.splice(indexinv, 1);
-        arrfackinvoice[numarr].dateofregistration.splice(indexinv, 1);
-        console.log(arrfackinvoice[numarr]);
+        }
       });
-
-    setarrinvoice(arrfackinvoice); // تحديث الحالة بالمصفوفة المعدلة
-  };
+      setarrinvoice(arrfackinvoice);
+  }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addItem = (mode, value) => {
@@ -642,7 +663,7 @@ const Page = ({ params }) => {
                             required
                             className="inp_invoice"
                             type="text"
-                            style={{ textAlign: "center", width:"100%" }}
+                            style={{ textAlign: "center", width: "100%" }}
                             id={`inv_des_${index}_${Larr}`}
                             readOnly
                             defaultValue={arr.description[Larr]}
@@ -691,10 +712,11 @@ const Page = ({ params }) => {
                             }}
                             className="col-4"
                           >
+                            
                             <input
                               type="checkbox"
                               className="btn-check border-0"
-                              id={`delet_${index}_${Larr}`}
+                              id={`delet_${index}_${Larr}_${ inpsmoney[index+1] - (inpsmoney[index+1]-inpsmoney[index]) + Larr}`}
                               onClick={(e) => {
                                 Selectitemdelete(e.target);
                               }}
@@ -703,8 +725,9 @@ const Page = ({ params }) => {
                             <label
                               style={{ border: "none", background: "none" }}
                               className="btn btn-outline-danger"
-                              htmlFor={`delet_${index}_${Larr}`}
+                              htmlFor={`delet_${index}_${Larr}_${ inpsmoney[index+1] - (inpsmoney[index+1]-inpsmoney[index]) + Larr}`}
                             >
+                              
                               <i
                                 className="fa-regular fa-trash-can"
                                 style={{ Color: "#8a0000" }}
