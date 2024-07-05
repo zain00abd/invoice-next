@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { notFound, usePathname  } from "next/navigation";
 import { useEffect, useState } from "react";
+import Header from "components/Header";
+
 
 const Page = () => {
   useEffect(() => {
@@ -12,12 +14,11 @@ const Page = () => {
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
   }, []);
 
-  const [dataa, setdata] = useState([]);
   const [arrinv, setarrinv] = useState(0);
-  
+  const [dataa, setdata] = useState([]);
+  const [dataSearch, setdataSearch] = useState([]);
 
-  const pathname = usePathname()
-  console.log(pathname)
+
 
 
 
@@ -55,13 +56,27 @@ const Page = () => {
       });
   
       setdata(updatedResult);
+      setdataSearch(updatedResult)
     };
   
     getData();
   }, []);
+
+  
+
+  const searchuser = (value) =>{
+    console.log(value)
+    const filteredData = dataSearch.filter((item) => 
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
+    console.log(filteredData);
+    setdata(filteredData)
+  }
   
 
   return (
+    <>
+      <Header onValueChange={searchuser}/>
     <div className="container">
       <div className="mb-5" style={{ marginTop: 20 }}>
         {dataa.map((user) => (
@@ -103,6 +118,7 @@ const Page = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,7 +1,27 @@
+"use client"
 import Link from 'next/link';
 import React from 'react';
 
-const Header = () => {
+import { useState } from 'react';
+
+
+
+
+
+const Header = ({onValueChange}) => {
+
+  const [state, setstate] = useState(null);
+
+  const seachtype = (e) =>{
+
+    onValueChange(e)
+
+  }
+
+
+
+
+
   return (
 <nav
   className="navbar sticky-top navbar-expand-lg "
@@ -73,6 +93,10 @@ const Header = () => {
             placeholder="Search"
             aria-label="Search"
             defaultValue=""
+            onKeyUp={(e) =>{
+              // @ts-ignore
+              seachtype(e.target.value)
+            }}
           />
           <button className="btn btn-outline-success" type="submit">
             Search

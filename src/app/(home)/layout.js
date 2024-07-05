@@ -8,7 +8,6 @@ import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
 import "@fortawesome/fontawesome-free/css/solid.min.css";
 import 'react-toastify/dist/ReactToastify.css';
 
-import Header from "components/Header";
 
 
 
@@ -17,7 +16,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body style={{backgroundColor: "aliceblue"}}>
-      <Header />
+      {/* <Header /> */}
 
         {children}
         </body>
