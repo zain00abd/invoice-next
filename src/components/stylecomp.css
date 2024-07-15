@@ -1,0 +1,19 @@
+.gradient-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.gradient-icon::before {
+
+
+
+
+  background: linear-gradient(45deg, #78c2ff, #004bd6, #78c2ff);
+  border-radius: 30px;
+
+  padding: 9px;
+
+}
+.navbar-toggler:focus{
+  box-shadow:none
+}
