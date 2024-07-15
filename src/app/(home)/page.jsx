@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound, usePathname  } from "next/navigation";
 import { useEffect, useState } from "react";
 import Header from "components/Header";
+import Head from "components/Head";
+
 
 
 const Page = () => {
@@ -76,6 +78,7 @@ const Page = () => {
 
   return (
     <>
+    <Head actev={"home"} />
       <Header onValueChange={searchuser}/>
     <div className="container">
       <div className="mb-5" style={{ marginTop: 20 }}>

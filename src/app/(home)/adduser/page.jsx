@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 import "./style.css"
+import Head from "components/Head";
 
 const Page = () => {
 
@@ -46,6 +47,7 @@ const Page = () => {
 
   return (
 <>
+<Head actev={"adduser"} />
   <h4> اضافة عميل جديد </h4>
   <div className="container mt-3">
     <form onSubmit={setuser} style={{ direction: "rtl" }} >

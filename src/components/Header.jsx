@@ -14,7 +14,7 @@ const Header = ({ onValueChange }) => {
 
   return (
     <>
-      <Head />
+      
       {/* <nav
         className="navbar sticky-top navbar-expand-lg "
         style={{ fontWeight: 600, backgroundColor: "#f0f3ffea" }}
