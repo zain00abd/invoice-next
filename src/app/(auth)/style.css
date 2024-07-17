@@ -10,7 +10,8 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-image: url("/img/kkw.png");
+  background: rgb(94,142,215);
+  background: radial-gradient(circle, rgb(33, 115, 153) 0%, rgb(0, 45, 75) 100%);
   background-size: cover; /* يضمن أن الصورة تغطي كل المساحة المتاحة دون أن تفقد جودتها */
   background-position: center; /* تضمن تمركز الصورة بشكل صحيح */
   background-repeat: no-repeat; /* تمنع تكرار الصورة */
@@ -35,8 +36,8 @@ input::placeholder{
   width: 90%;
   max-width: 400px;
   padding: 40px;
-  background-image: linear-gradient(to bottom, #003144e1 0%, #18557ef6 100%);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  background-image: linear-gradient(to bottom, #00689100 0%, #00465800 100%);
+
   border-radius: 10px;
   position: relative;
   z-index: 1;
@@ -78,7 +79,7 @@ input::placeholder{
 .form-group input:focus,
 .form-group input:valid {
   border-color: #0099ff;
-  box-shadow: 0 0 5px rgba(38, 145, 217, 0.5);
+  box-shadow: 0 0 50px rgb(34, 64, 95);
 }
 
 
@@ -98,12 +99,13 @@ input::placeholder{
 }
 
 button {
-  margin: auto 38px;
-  width: 75%;
+  position: relative;
+  left: 25%;
+  width: 50%;
   padding: 12px;
   font-size: 18px;
   color: white;
-  background-image: linear-gradient(to right, #00354e , #005a66 );
+  background-image: linear-gradient(to right, #00779b , #009eb3 );
   border: none;
   border-radius: 5px;
   cursor: pointer;
