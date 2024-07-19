@@ -24,3 +24,19 @@
 
 
 }
+
+.active {
+  position: relative;
+  text-decoration: none; /* يزيل التحتية الافتراضية إذا كان العنصر هو رابط */
+}
+
+.active::after {
+  content: ''; /* مطلوب لإنشاء العنصر الزائف ::after */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px; /* سمك الخط */
+  background: linear-gradient(to right, #2b87ff, #41b3ff); /* تدرج لوني للخط */
+  box-shadow: 0 0 8px rgb(65, 147, 255); /* ظل مضيء حول الخط */
+}
