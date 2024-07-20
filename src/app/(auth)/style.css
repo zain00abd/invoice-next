@@ -12,9 +12,6 @@ body {
   min-height: 100vh;
   background: rgb(94,142,215);
   background: radial-gradient(circle, rgb(33, 115, 153) 0%, rgb(0, 45, 75) 100%);
-  background-size: cover; /* يضمن أن الصورة تغطي كل المساحة المتاحة دون أن تفقد جودتها */
-  background-position: center; /* تضمن تمركز الصورة بشكل صحيح */
-  background-repeat: no-repeat; /* تمنع تكرار الصورة */
 }
 input::placeholder{
   color: #c7c7c7;
@@ -36,11 +33,6 @@ input::placeholder{
   width: 90%;
   max-width: 400px;
   padding: 40px;
-  background-image: linear-gradient(to bottom, #00689100 0%, #00465800 100%);
-
-  border-radius: 10px;
-  position: relative;
-  z-index: 1;
 
 }
 
@@ -78,7 +70,7 @@ input::placeholder{
 
 .form-group input:focus,
 .form-group input:valid {
-  border-color: #0099ff;
+  border-color: #c8e9ff;
   box-shadow: 0 0 50px rgb(34, 64, 95);
 }
 
@@ -117,6 +109,15 @@ button:hover {
   
   background-image: linear-gradient(to right, #008597 , #008597 );
 }
+
+.suggestion p{
+  margin-bottom: 20px;
+  text-align: end;
+  color: #ffffff;
+}
+
+
+
 
 /* Responsive Media Queries */
 @media (max-width: 768px) {
