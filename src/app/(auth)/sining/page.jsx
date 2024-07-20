@@ -2,7 +2,7 @@
 
 
 import Head from 'components/Head';
-import '../style.css'
+
 
 export const metadata = {
   title: "Signin page",

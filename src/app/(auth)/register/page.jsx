@@ -2,7 +2,7 @@
 // import Header from "components/header/header";
 
 import Head from "components/Head";
-import "../style.css";
+
 
 export const metadata = {
   title: "Register page",
