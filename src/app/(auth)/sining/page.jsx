@@ -8,6 +8,7 @@ export const metadata = {
   title: "Signin page",
   description: "description for Signin page",
 };
+
 const Page = () => {
   return (
 <>
