@@ -86,9 +86,7 @@ input::placeholder{
   transition: width 0.3s ease;
 }
 
-.form-group input:focus ~ .bar {
-  width: 100%;
-}
+
 
 button {
   position: relative;
@@ -101,7 +99,9 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition:  0.3s;
+  border: none;
+  outline: none;
+
 }
 
 button:hover {

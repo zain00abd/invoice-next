@@ -21,7 +21,6 @@ const Page = () => {
                 id="email"
                 placeholder=" البريد الالكتروني "
               />
-
               <div className="bar" />
             </div>
             <div className="form-group">
