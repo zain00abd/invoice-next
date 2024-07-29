@@ -11,7 +11,7 @@ body {
   align-items: center;
   min-height: 100vh;
   background: rgb(94,142,215);
-  background: radial-gradient(circle, rgb(33, 115, 153) 0%, rgb(0, 45, 75) 100%);
+  background: radial-gradient(circle, #003558 0%, #19526d 100%);
 }
 input::placeholder{
   color: #c7c7c7;
