@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import Frompage from "./frompage";
+import Musseg from "components/Musseg";
 
 export const metadata = {
   title: "Register page",
@@ -14,6 +15,7 @@ const Page = () => {
 
   return (
     <>
+  <Musseg />
       <div className="login-container">
         <div className="login-form">
           <h1> انشاء حساب </h1>
